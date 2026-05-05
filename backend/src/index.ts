@@ -2,6 +2,8 @@ import {serve} from "@hono/node-server";
 import {Hono} from "hono";
 import {cors} from "hono/cors";
 import foodRoute from "./routes/food";
+import authRoute from "./routes/auth-route.js";
+import {requireAuth} from "./middleware/requireAuth.js";
 
 const app = new Hono();
 
@@ -17,6 +19,8 @@ app.get("/", (c) => c.text("Hello Hono!"));
 app.get("/health", (c) => c.text("ok"));
 
 app.route("/food", foodRoute);
+
+app.route("/auth", authRoute);
 
 serve(
   {

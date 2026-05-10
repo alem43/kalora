@@ -8,6 +8,13 @@
       "when": 1777996619401,
       "tag": "0000_brown_proudstar",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1778425064153,
+      "tag": "0001_zippy_gorilla_man",
+      "breakpoints": true
     }
   ]
 }

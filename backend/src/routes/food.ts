@@ -28,14 +28,19 @@ food.get("/", async (c) => {
 food.post("/", async (c) => {
   try {
     const userId = c.get("userId");
-    const {foodName, calories, date} = await c.req.json();
+    const {foodName, quantity, calories, protein, carbs, fat, date} =
+      await c.req.json();
 
     const result = await db
       .insert(foodLogs)
       .values({
         userId,
         foodName,
+        quantity,
         calories,
+        protein,
+        carbs,
+        fat,
         date,
       })
       .returning();

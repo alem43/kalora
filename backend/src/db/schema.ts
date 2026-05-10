@@ -7,6 +7,10 @@ export const foodLogs = sqliteTable("food_logs", {
     .references(() => users.id),
   foodName: text("food_name").notNull(),
   calories: integer("calories").notNull(),
+  quantity: integer("quantity").notNull(),
+  protein: integer("protein").notNull(),
+  carbs: integer("carbs").notNull(),
+  fat: integer("fat").notNull(),
   date: text("date").notNull(),
 });
 

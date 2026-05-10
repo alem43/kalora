@@ -1,4 +1,5 @@
 import React from 'react'
+import { useEffect, useState } from 'react'
 import plusIcon from '../images/plus.svg'
 import {
   Command,
@@ -31,6 +32,7 @@ const FoodLog = ({ onFoodAdded }) => {
   const [quantity, setQuantity] = React.useState(100)
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
+  const [foods, setFoods] = React.useState([])
 
   React.useEffect(() => {
     if (!search || search.length < 2) {
@@ -56,6 +58,25 @@ const FoodLog = ({ onFoodAdded }) => {
     return () => clearTimeout(timer)
   }, [search])
 
+  useEffect(() => {
+    fetchFoods()
+  }, [])
+
+  const fetchFoods = async () => {
+    try {
+      const res = await fetch('http://localhost:8787/food', {
+        credentials: 'include',
+      })
+
+      if (!res.ok) return
+
+      const data = await res.json()
+      setFoods(data)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+
   const getNutrient = (food, nutrientId, qty = 100) => {
     const nutrient = food.foodNutrients?.find(
       (n) => n.nutrientId === nutrientId,
@@ -69,7 +90,6 @@ const FoodLog = ({ onFoodAdded }) => {
 
     try {
       const res = await fetch('http://localhost:8787/food', {
-        // Was localhost:3000
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -85,6 +105,8 @@ const FoodLog = ({ onFoodAdded }) => {
       })
 
       if (res.ok) {
+        await fetchFoods()
+
         setSuccess(true)
         onFoodAdded?.()
 
@@ -103,121 +125,147 @@ const FoodLog = ({ onFoodAdded }) => {
   }
 
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger>
-        <div className="w-50 h-50 box-shadow flex flex-col justify-center items-center-safe rounded-b-4xl">
-          <img src={plusIcon} alt="plus" className="w-full h-full max-w-36" />
-          <p>Add food</p>
-        </div>
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader>
-          <DrawerTitle className="text-2xl">Add Food</DrawerTitle>
-          {!selected ? (
-            <Command shouldFilter={false}>
-              <CommandInput
-                placeholder="Search food (e.g., banana)"
-                value={search}
-                onValueChange={setSearch}
+    <>
+      <Drawer open={open} onOpenChange={setOpen}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          {foods.map((food) => (
+            <div
+              key={food.id}
+              className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col justify-between"
+            >
+              <div>
+                <p className="text-lg font-semibold line-clamp-2">
+                  {food.foodName}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {food.calories} cal
+                </p>
+              </div>
+              <p className="text-sm text-muted-foreground">{food.quantity}g</p>
+            </div>
+          ))}
+          <DrawerTrigger asChild>
+            <div className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col items-center justify-center cursor-pointer hover:scale-[1.02] transition">
+              <img
+                src={plusIcon}
+                alt="plus"
+                className="w-full h-full max-w-20"
               />
-              <CommandList>
-                {loading && <CommandEmpty>Searching...</CommandEmpty>}
-                {!loading && search && results.length === 0 && (
-                  <CommandEmpty>No results</CommandEmpty>
-                )}
-                {!loading && results.length > 0 && (
-                  <CommandGroup>
-                    {results.map((food) => (
-                      <CommandItem
-                        key={food.fdcId}
-                        onSelect={() => setSelected(food)}
-                        className="cursor-pointer"
-                      >
-                        <div className="flex flex-col w-full">
-                          <span className="font-medium">
-                            {food.description}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            per 100g: {getNutrient(food, 1008)} cal
-                          </span>
-                        </div>
-                      </CommandItem>
-                    ))}
-                  </CommandGroup>
-                )}
-              </CommandList>
-            </Command>
-          ) : (
-            <div className="space-y-4">
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="font-semibold">{selected.description}</p>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="quantity">Quantity (grams)</Label>
-                <Input
-                  id="quantity"
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  min="1"
-                  className="text-lg"
+              <p>Add food</p>
+            </div>
+          </DrawerTrigger>
+        </div>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle className="text-2xl">Add Food</DrawerTitle>
+            {!selected ? (
+              <Command shouldFilter={false}>
+                <CommandInput
+                  placeholder="Search food "
+                  value={search}
+                  onValueChange={setSearch}
                 />
-              </div>
-              <div className="p-4 border rounded-lg">
-                <h3 className="font-semibold mb-3">Nutrition ({quantity}g)</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="text-center p-2 bg-muted rounded">
-                    <p className="text-2xl font-bold">
-                      {getNutrient(selected, 1008, quantity)}
-                    </p>
-                    <p className="text-xs text-muted-foreground">Calories</p>
-                  </div>
-                  <div className="text-center p-2 bg-muted rounded">
-                    <p className="text-2xl font-bold">
-                      {getNutrient(selected, 1003, quantity)}g
-                    </p>
-                    <p className="text-xs text-muted-foreground">Protein</p>
-                  </div>
-                  <div className="text-center p-2 bg-muted rounded">
-                    <p className="text-2xl font-bold">
-                      {getNutrient(selected, 1005, quantity)}g
-                    </p>
-                    <p className="text-xs text-muted-foreground">Carbs</p>
-                  </div>
-                  <div className="text-center p-2 bg-muted rounded">
-                    <p className="text-2xl font-bold">
-                      {getNutrient(selected, 1004, quantity)}g
-                    </p>
-                    <p className="text-xs text-muted-foreground">Fat</p>
+                <CommandList>
+                  {loading && <CommandEmpty>Searching...</CommandEmpty>}
+                  {!loading && search && results.length === 0 && (
+                    <CommandEmpty>No results</CommandEmpty>
+                  )}
+                  {!loading && results.length > 0 && (
+                    <CommandGroup>
+                      {results.map((food) => (
+                        <CommandItem
+                          key={food.fdcId}
+                          onSelect={() => setSelected(food)}
+                          className="cursor-pointer"
+                        >
+                          <div className="flex flex-col w-full">
+                            <span className="font-medium">
+                              {food.description}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              per 100g: {getNutrient(food, 1008)} cal
+                            </span>
+                          </div>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </CommandList>
+              </Command>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-3 bg-muted rounded-lg">
+                  <p className="font-semibold">{selected.description}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="quantity">Quantity (grams)</Label>
+                  <Input
+                    id="quantity"
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    min="1"
+                    className="text-lg"
+                  />
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h3 className="font-semibold mb-3">
+                    Nutrition ({quantity}g)
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="text-center p-2 bg-muted rounded">
+                      <p className="text-2xl font-bold">
+                        {getNutrient(selected, 1008, quantity)}
+                      </p>
+                      <p className="text-xs text-muted-foreground">Calories</p>
+                    </div>
+                    <div className="text-center p-2 bg-muted rounded">
+                      <p className="text-2xl font-bold">
+                        {getNutrient(selected, 1003, quantity)}g
+                      </p>
+                      <p className="text-xs text-muted-foreground">Protein</p>
+                    </div>
+                    <div className="text-center p-2 bg-muted rounded">
+                      <p className="text-2xl font-bold">
+                        {getNutrient(selected, 1005, quantity)}g
+                      </p>
+                      <p className="text-xs text-muted-foreground">Carbs</p>
+                    </div>
+                    <div className="text-center p-2 bg-muted rounded">
+                      <p className="text-2xl font-bold">
+                        {getNutrient(selected, 1004, quantity)}g
+                      </p>
+                      <p className="text-xs text-muted-foreground">Fat</p>
+                    </div>
                   </div>
                 </div>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setSelected(null)}
+                >
+                  Change Food
+                </Button>
               </div>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setSelected(null)}
-              >
-                Change Food
-              </Button>
-            </div>
-          )}
-        </DrawerHeader>
-        <DrawerFooter>
-          <Button
-            onClick={handleSubmit}
-            disabled={!selected || !quantity || success}
-            className={`w-full transition-all duration-300 ${
-              success ? 'bg-green-600 hover:bg-green-600' : ''
-            }`}
-          >
-            {success ? '✓ Food logged!' : 'Add to Log'}
-          </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+            )}
+          </DrawerHeader>
+          <DrawerFooter>
+            <Button
+              onClick={handleSubmit}
+              disabled={!selected || !quantity || success}
+              className={`w-full transition-all duration-300 ${
+                success ? 'bg-green-600 hover:bg-green-600' : ''
+              }`}
+            >
+              {success ? '✓ Food logged!' : 'Add to Log'}
+            </Button>
+            <DrawerClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
   )
 }
 

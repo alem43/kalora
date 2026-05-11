@@ -17,8 +17,15 @@ export const foodLogs = sqliteTable("food_logs", {
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   email: text("email").unique().notNull(),
-  userName: text("user_name").notNull(),
+  userName: text("user_name").unique().notNull(),
   passwordHash: text("password_hash").notNull(),
+  gender: text("gender").notNull(),
+  age: integer("age").notNull(),
+  height: integer("height").notNull(),
+  weight: integer("weight").notNull(),
+  goalWeight: integer("goal_weight"),
+  activityLevel: text("activity_level").notNull(),
+  goal: text("goal").notNull(),
   createdAt: integer("created_at").notNull(),
 });
 

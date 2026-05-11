@@ -15,6 +15,20 @@
       "when": 1778425064153,
       "tag": "0001_zippy_gorilla_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1778523847212,
+      "tag": "0002_faithful_blue_shield",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1778525240326,
+      "tag": "0003_cuddly_fantastic_four",
+      "breakpoints": true
     }
   ]
 }

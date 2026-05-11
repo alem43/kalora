@@ -1,0 +1,149 @@
+import { createFileRoute, useNavigate, Link } from '@tanstack/react-router'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import * as z from 'zod'
+import { useState } from 'react'
+
+export const Route = createFileRoute('/login')({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const navigate = useNavigate()
+  const [serverError, setServerError] = useState<string>('')
+
+  const loginValuesSchema = z.object({
+    email: z.string().email('Please enter a valid email'),
+    password: z.string().min(1, 'Password is required'),
+  })
+
+  type LoginValues = z.infer<typeof loginValuesSchema>
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginValues>({
+    resolver: zodResolver(loginValuesSchema),
+  })
+
+  const onSubmit = async (data: LoginValues) => {
+    try {
+      setServerError('')
+
+      const response = await fetch('http://localhost:8787/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        setServerError(error.error || 'Login failed')
+        return
+      }
+
+      const user = await response.json()
+      navigate({ to: '/' })
+    } catch (error) {
+      setServerError('Network error. Please try again.')
+      console.error('Login error:', error)
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50 px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-gray-600">Sign in to continue tracking</p>
+          </div>
+          {serverError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-sm text-red-600">{serverError}</p>
+            </div>
+          )}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-1.5"
+              >
+                Email
+              </label>
+              <input
+                {...register('email')}
+                type="email"
+                id="email"
+                autoFocus
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                placeholder="you@example.com"
+              />
+              {errors.email && (
+                <p className="mt-1.5 text-xs text-red-600">
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Password
+                </label>
+                <a
+                  href="#"
+                  className="text-xs text-green-600 hover:text-green-700"
+                >
+                  Forgot password?
+                </a>
+              </div>
+              <input
+                {...register('password')}
+                type="password"
+                id="password"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                placeholder="••••••••"
+              />
+              {errors.password && (
+                <p className="mt-1.5 text-xs text-red-600">
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Signing In...' : 'Sign In'}
+            </button>
+          </form>
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Don't have an account?{' '}
+              <Link
+                to="/register"
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </div>
+        <p className="mt-6 text-center text-xs text-gray-500">
+          Protected by industry-standard encryption
+        </p>
+      </div>
+    </div>
+  )
+}

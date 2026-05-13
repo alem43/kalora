@@ -9,14 +9,9 @@ import {
 
 const Navbar = () => {
   return (
-    <Sidebar>
-      <SidebarHeader />
-      <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
-      </SidebarContent>
-      <SidebarFooter />
-    </Sidebar>
+    <div className="w-full">
+      <a href="/register">register</a>
+    </div>
   )
 }
 

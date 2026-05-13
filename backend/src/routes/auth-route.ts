@@ -10,7 +10,32 @@ const authRoute = new Hono();
 
 authRoute.post("/register", async (c) => {
   try {
-    const {email, userName, password} = await c.req.json();
+    const {
+      email,
+      userName,
+      password,
+      gender,
+      age,
+      height,
+      weight,
+      goalWeight,
+      activityLevel,
+      goal,
+    } = await c.req.json();
+
+    if (
+      !email ||
+      !userName ||
+      !password ||
+      !gender ||
+      !age ||
+      !height ||
+      !weight ||
+      !activityLevel ||
+      !goal
+    ) {
+      return c.json({error: "Missing required fields"}, 400);
+    }
 
     if (!email || !userName || !password) {
       return c.json({error: "Missing required fields"}, 400);
@@ -38,8 +63,29 @@ authRoute.post("/register", async (c) => {
       email,
       userName,
       passwordHash: await hashPassword(password),
+      gender,
+      age,
+      height,
+      weight,
+      goalWeight,
+      activityLevel,
+      goal,
       createdAt: Date.now(),
     };
+
+    if (
+      !email ||
+      !userName ||
+      !password ||
+      !gender ||
+      !age ||
+      !height ||
+      !weight ||
+      !activityLevel ||
+      !goal
+    ) {
+      return c.json({error: "Missing required fields"}, 400);
+    }
 
     await db.insert(users).values(newUser);
     await createSession(c, userId);

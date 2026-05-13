@@ -23,6 +23,13 @@ app.route("/food", foodRoute);
 
 app.route("/auth", authRoute);
 
+app.use("/protected", authMiddleware);
+
+app.get("/protected", (c) => {
+  const user = c.get("user");
+  return c.text(`ok protected: ${user.email}`);
+});
+
 serve(
   {
     fetch: app.fetch,

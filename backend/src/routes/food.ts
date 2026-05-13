@@ -6,7 +6,7 @@ import {authMiddleware} from "../middleware/requireAuth.js";
 
 const food = new Hono();
 
-food.use("/*", authMiddleware);
+food.use("/", authMiddleware);
 
 food.get("/", async (c) => {
   try {

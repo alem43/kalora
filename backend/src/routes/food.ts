@@ -3,77 +3,68 @@ import {db} from "../db/index.js";
 import {foodLogs} from "../db/schema.js";
 import {eq} from "drizzle-orm";
 import {authMiddleware} from "../middleware/requireAuth.js";
+import {createFoodLogSchema} from "../utils/food-validation.js";
+import {AppError} from "../middleware/errorHandler.js";
 
 const food = new Hono();
 
 food.use("/", authMiddleware);
 
 food.get("/", async (c) => {
-  try {
-    const userId = c.get("userId");
+  const userId = c.get("userId");
 
-    const logs = await db
-      .select()
-      .from(foodLogs)
-      .where(eq(foodLogs.userId, userId))
-      .all();
+  const logs = await db
+    .select()
+    .from(foodLogs)
+    .where(eq(foodLogs.userId, userId))
+    .all();
 
-    return c.json(logs);
-  } catch (error) {
-    console.error("Get food logs error:", error);
-    return c.json({error: "Internal server error"}, 500);
-  }
+  return c.json(logs);
 });
 
 food.post("/", async (c) => {
-  try {
-    const userId = c.get("userId");
-    const {foodName, quantity, calories, protein, carbs, fat, date} =
-      await c.req.json();
+  const userId = c.get("userId");
+  const body = await c.req.json();
+  const data = createFoodLogSchema.parse(body);
 
-    const result = await db
-      .insert(foodLogs)
-      .values({
-        userId,
-        foodName,
-        quantity,
-        calories,
-        protein,
-        carbs,
-        fat,
-        date,
-      })
-      .returning();
+  const result = await db
+    .insert(foodLogs)
+    .values({
+      userId,
+      foodName: data.foodName,
+      quantity: data.quantity,
+      calories: data.calories,
+      protein: data.protein,
+      carbs: data.carbs,
+      fat: data.fat,
+      date: data.date,
+    })
+    .returning();
 
-    return c.json(result[0], 201);
-  } catch (error) {
-    console.error("Create food log error:", error);
-    return c.json({error: "Internal server error"}, 500);
-  }
+  return c.json(result[0], 201);
 });
 
 food.delete("/:id", async (c) => {
-  try {
-    const userId = c.get("userId");
-    const id = parseInt(c.req.param("id"));
+  const userId = c.get("userId");
+  const id = parseInt(c.req.param("id"));
 
-    const log = await db
-      .select()
-      .from(foodLogs)
-      .where(eq(foodLogs.id, id))
-      .get();
-
-    if (!log || log.userId !== userId) {
-      return c.json({error: "Not found"}, 404);
-    }
-
-    await db.delete(foodLogs).where(eq(foodLogs.id, id));
-
-    return c.json({message: "Deleted"});
-  } catch (error) {
-    console.error("Delete food log error:", error);
-    return c.json({error: "Internal server error"}, 500);
+  if (isNaN(id)) {
+    throw new AppError(400, "Invalid food ID", "INVALID_ID");
   }
+
+  const log = await db
+    .select()
+    .from(foodLogs)
+    .where(eq(foodLogs.id, id))
+    .get();
+
+  if (!log || log.userId !== userId) {
+    throw new AppError(404, "Food log not found", "NOT_FOUND");
+  }
+
+  await db.delete(foodLogs).where(eq(foodLogs.id, id));
+
+  return c.json({message: "Deleted"});
 });
 
 export default food;

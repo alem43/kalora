@@ -21,8 +21,16 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer'
+import { api, ApiError } from '#/lib/api'
 
-const API_KEY = 'd8tkLb5J4HS11xXhao5G8JHXfyRa2tJEKexqpaGZ'
+const API_KEY = import.meta.env.VITE_USDA_API_KEY || ''
+
+const NUTRIENT_IDS = {
+  CALORIES: 1008,
+  PROTEIN: 1003,
+  CARBS: 1005,
+  FAT: 1004,
+}
 
 const FoodLog = ({ onFoodAdded }) => {
   const [open, setOpen] = React.useState(false)
@@ -64,13 +72,7 @@ const FoodLog = ({ onFoodAdded }) => {
 
   const fetchFoods = async () => {
     try {
-      const res = await fetch('http://localhost:8787/food', {
-        credentials: 'include',
-      })
-
-      if (!res.ok) return
-
-      const data = await res.json()
+      const data = await api.food.list()
       setFoods(data)
     } catch (err) {
       console.error(err)
@@ -89,37 +91,34 @@ const FoodLog = ({ onFoodAdded }) => {
     if (!selected || !quantity) return
 
     try {
-      const res = await fetch('http://localhost:8787/food', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          foodName: selected.description,
-          quantity: quantity,
-          calories: getNutrient(selected, 1008, quantity),
-          protein: getNutrient(selected, 1003, quantity),
-          carbs: getNutrient(selected, 1005, quantity),
-          fat: getNutrient(selected, 1004, quantity),
-          date: new Date().toISOString().split('T')[0],
-        }),
-      })
-
-      if (res.ok) {
-        await fetchFoods()
-
-        setSuccess(true)
-        onFoodAdded?.()
-
-        setTimeout(() => {
-          setOpen(false)
-          setSuccess(false)
-          setSearch('')
-          setSelected(null)
-          setQuantity(100)
-          setResults([])
-        }, 1500)
+      const newFood = {
+        foodName: selected.description,
+        quantity: quantity,
+        calories: getNutrient(selected, NUTRIENT_IDS.CALORIES, quantity),
+        protein: getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity),
+        carbs: getNutrient(selected, NUTRIENT_IDS.CARBS, quantity),
+        fat: getNutrient(selected, NUTRIENT_IDS.FAT, quantity),
+        date: new Date().toISOString().split('T')[0],
       }
+
+      const createdFood = await api.food.create(newFood)
+      setFoods([...foods, createdFood])
+
+      setSuccess(true)
+      onFoodAdded?.()
+
+      setTimeout(() => {
+        setOpen(false)
+        setSuccess(false)
+        setSearch('')
+        setSelected(null)
+        setQuantity(100)
+        setResults([])
+      }, 1500)
     } catch (err) {
+      if (err instanceof ApiError) {
+        console.error('API error:', err.code, err.status)
+      }
       console.error('Failed:', err)
     }
   }
@@ -183,7 +182,7 @@ const FoodLog = ({ onFoodAdded }) => {
                               {food.description}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              per 100g: {getNutrient(food, 1008)} cal
+                              per 100g: {getNutrient(food, NUTRIENT_IDS.CALORIES)} cal
                             </span>
                           </div>
                         </CommandItem>
@@ -215,25 +214,25 @@ const FoodLog = ({ onFoodAdded }) => {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="text-center p-2 bg-muted rounded">
                       <p className="text-2xl font-bold">
-                        {getNutrient(selected, 1008, quantity)}
+                        {getNutrient(selected, NUTRIENT_IDS.CALORIES, quantity)}
                       </p>
                       <p className="text-xs text-muted-foreground">Calories</p>
                     </div>
                     <div className="text-center p-2 bg-muted rounded">
                       <p className="text-2xl font-bold">
-                        {getNutrient(selected, 1003, quantity)}g
+                        {getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity)}g
                       </p>
                       <p className="text-xs text-muted-foreground">Protein</p>
                     </div>
                     <div className="text-center p-2 bg-muted rounded">
                       <p className="text-2xl font-bold">
-                        {getNutrient(selected, 1005, quantity)}g
+                        {getNutrient(selected, NUTRIENT_IDS.CARBS, quantity)}g
                       </p>
                       <p className="text-xs text-muted-foreground">Carbs</p>
                     </div>
                     <div className="text-center p-2 bg-muted rounded">
                       <p className="text-2xl font-bold">
-                        {getNutrient(selected, 1004, quantity)}g
+                        {getNutrient(selected, NUTRIENT_IDS.FAT, quantity)}g
                       </p>
                       <p className="text-xs text-muted-foreground">Fat</p>
                     </div>

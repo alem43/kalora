@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useState } from 'react'
+import { api, ApiError } from '#/lib/api'
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
@@ -31,26 +32,22 @@ function RouteComponent() {
     try {
       setServerError('')
 
-      const response = await fetch('http://localhost:8787/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+      await api.auth.login({
+        email: data.email,
+        password: data.password,
       })
 
-      if (!response.ok) {
-        const error = await response.json()
-        setServerError(error.error || 'Login failed')
-        return
-      }
-
-      const user = await response.json()
       navigate({ to: '/' })
     } catch (error) {
-      setServerError('Network error. Please try again.')
+      if (error instanceof ApiError) {
+        if (error.status === 401) {
+          setServerError('Invalid email or password')
+        } else {
+          setServerError(`Error: ${error.code}`)
+        }
+      } else {
+        setServerError('Network error. Please try again.')
+      }
       console.error('Login error:', error)
     }
   }

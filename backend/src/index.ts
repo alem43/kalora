@@ -4,16 +4,22 @@ import {cors} from "hono/cors";
 import foodRoute from "./routes/food.js";
 import authRoute from "./routes/auth-route.js";
 import {authMiddleware} from "./middleware/requireAuth.js";
+import {errorHandler} from "./middleware/errorHandler.js";
 
 const app = new Hono();
+
+const API_PORT = parseInt(process.env.API_PORT || "8787", 10);
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(
   "*",
   cors({
-    origin: "http://localhost:3000",
+    origin: FRONTEND_URL,
     credentials: true,
   }),
 );
+
+app.use("*", errorHandler);
 
 app.get("/", (c) => c.text("Hello Hono!"));
 
@@ -33,7 +39,7 @@ app.get("/protected", (c) => {
 serve(
   {
     fetch: app.fetch,
-    port: 8787,
+    port: API_PORT,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);

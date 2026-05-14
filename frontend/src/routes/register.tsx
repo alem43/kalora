@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useState } from 'react'
+import { api, ApiError } from '#/lib/api'
 
 export const Route = createFileRoute('/register')({
   component: RouteComponent,
@@ -76,33 +77,34 @@ function RouteComponent() {
       setServerError('')
       const completeData = { ...formData, ...data }
 
-      const response = await fetch('http://localhost:8787/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          userName: completeData.userName,
-          email: completeData.email,
-          password: completeData.password,
-          gender: completeData.gender,
-          age: completeData.age,
-          height: completeData.height,
-          weight: completeData.weight,
-          goalWeight: completeData.goalWeight,
-          activityLevel: completeData.activityLevel,
-          goal: completeData.goal,
-        }),
+      await api.auth.register({
+        userName: completeData.userName,
+        email: completeData.email,
+        password: completeData.password,
+        gender: completeData.gender,
+        age: completeData.age,
+        height: completeData.height,
+        weight: completeData.weight,
+        goalWeight: completeData.goalWeight,
+        activityLevel: completeData.activityLevel,
+        goal: completeData.goal,
       })
-
-      if (!response.ok) {
-        const error = await response.json()
-        setServerError(error.error || 'Registration failed')
-        return
-      }
 
       setCurrentStep(3)
     } catch (error) {
-      setServerError('Network error. Please try again.')
+      if (error instanceof ApiError) {
+        if (error.code === 'EMAIL_EXISTS') {
+          setServerError('This email is already registered')
+        } else if (error.code === 'USERNAME_TAKEN') {
+          setServerError('This username is already taken')
+        } else if (error.code === 'VALIDATION_ERROR') {
+          setServerError('Please check your information and try again')
+        } else {
+          setServerError(`Error: ${error.code}`)
+        }
+      } else {
+        setServerError('Network error. Please try again.')
+      }
       console.error('Registration error:', error)
     }
   }

@@ -1,6 +1,6 @@
 import React from 'react'
-import {useState, useEffect} from 'react'
-import {api, ApiError} from '#/lib/api'
+import { useState, useEffect } from 'react'
+import { api, ApiError } from '#/lib/api'
 
 const Goal = () => {
   const [foods, setFoods] = React.useState([])
@@ -29,7 +29,10 @@ const Goal = () => {
     }
   }
 
-  const totalCalories = foods.reduce((sum: number, food: any) => sum + food.calories, 0)
+  const totalCalories = foods.reduce(
+    (sum: number, food: any) => sum + Number(food.calories || 0),
+    0,
+  )
   const goalCalories = totalCalories + 500
 
   if (loading) {

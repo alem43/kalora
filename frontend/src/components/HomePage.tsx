@@ -1,48 +1,10 @@
 import React from 'react'
+import Navbar from './Navbar'
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-avocado-200 selection:text-kalora-dark-green">
-      {/* --- HEADER --- */}
-      <header className="flex justify-between items-center p-6 max-w-7xl mx-auto border-b border-gray-100">
-        <div className="flex items-center space-x-3">
-          {/* Logo with text and image placeholder for f55ed978-32a2-47f7-ac99-41d3599eea88_removalai_preview.png */}
-          <div className="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full">
-            <span className="text-xl font-bold text-gray-400">#</span>
-            {/* Replace this div with the actual img tag when ready */}
-            {/* <img src="f55ed978-32a2-47f7-ac99-41d3599eea88_removalai_preview.png" alt="Kalora Logo" className="w-10 h-10" /> */}
-          </div>
-          <span className="text-3xl font-bold tracking-tighter text-kalora-dark-green">
-            Kalora
-          </span>
-        </div>
-        <nav className="space-x-8 text-base font-medium">
-          <a
-            href="#philosophy"
-            className="text-gray-700 hover:text-kalora-dark-green transition-colors"
-          >
-            Our Philosophy
-          </a>
-          <a
-            href="#features"
-            className="text-gray-700 hover:text-kalora-dark-green transition-colors"
-          >
-            Key Features
-          </a>
-          <a
-            href="/login"
-            className="text-gray-500 hover:text-gray-900 transition-colors"
-          >
-            Sign In
-          </a>
-          <a
-            href="/register"
-            className="bg-avocado-500 text-kalora-dark-green px-5 py-3 rounded-full hover:bg-avocado-400 transition-colors font-bold shadow-sm"
-          >
-            Discover Your Cadence
-          </a>
-        </nav>
-      </header>
+      <Navbar />
 
       {/* --- MAIN CONTENT --- */}
       <main className="max-w-7xl mx-auto px-6 py-16">
@@ -284,31 +246,6 @@ const HomePage = () => {
           </div>
         </div>
       </footer>
-
-      {/* Tailwind configuration details embedded */}
-      {/* You must configure tailwind.config.js with these colors for this code to work! */}
-      {/* Example for tailwind.config.js:
-          extend: {
-              colors: {
-                  'kalora-dark-green': '#003300', // Example dark forest green from the text
-                  'avocado': {
-                      50: '#F1FCEF',
-                      100: '#E2FBE0',
-                      200: '#C5F7C0',
-                      300: '#A8F3A0',
-                      400: '#8BEF80',
-                      500: '#7BCC66', // Example avocado green for CTAs and highlights
-                      600: '#6AA355',
-                      700: '#5A7A44',
-                      800: '#495133',
-                      900: '#382822', // Example pit brown/very dark green
-                  },
-                  'brown': {
-                      500: '#85513A', // Example pit brown for accents
-                  }
-              }
-          }
-      */}
     </div>
   )
 }

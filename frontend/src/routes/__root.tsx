@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { GoogleOAuthProvider } from '@react-oauth/google'
 
 import appCss from '../styles.css?url'
 
@@ -35,7 +36,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID}>
+          {children}
+        </GoogleOAuthProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

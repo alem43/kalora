@@ -7,6 +7,7 @@ import {eq} from "drizzle-orm";
 import {createSession, hashPassword} from "../utils/auth-helpers.js";
 import {registerSchema, loginSchema} from "../utils/auth-validation.js";
 import {AppError} from "../middleware/errorHandler.js";
+import {OAuth2Client} from "google-auth-library";
 
 const authRoute = new Hono();
 
@@ -94,6 +95,67 @@ authRoute.post("/logout", async (c) => {
 
   deleteCookie(c, "session");
   return c.json({message: "Logged out"});
+});
+
+authRoute.post("/google", async (c) => {
+  const {credential} = await c.req.json();
+
+  if (!credential) {
+    throw new AppError(400, "No credential provided", "NO_CREDENTIAL");
+  }
+
+  const client = new OAuth2Client(process.env.VITE_CLIENT_ID);
+
+  let payload;
+  try {
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.VITE_CLIENT_ID,
+    });
+    payload = ticket.getPayload();
+  } catch (err) {
+    throw new AppError(401, "Invalid Google token", "INVALID_TOKEN");
+  }
+
+  if (!payload?.email) {
+    throw new AppError(400, "No email in token", "NO_EMAIL");
+  }
+
+  let user = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, payload.email))
+    .get();
+
+  if (!user) {
+    const userId = crypto.randomUUID();
+    const newUser = {
+      id: userId,
+      email: payload.email,
+      userName: payload.email.split("@")[0],
+      passwordHash: "",
+      gender: "other",
+      age: 25,
+      height: 170,
+      weight: 70,
+      goalWeight: null,
+      activityLevel: "moderate",
+      goal: "maintain",
+      createdAt: Date.now(),
+    };
+
+    await db.insert(users).values(newUser);
+    user = newUser;
+  }
+
+  await createSession(c, user.id);
+
+  return c.json({
+    id: user.id,
+    email: user.email,
+    userName: user.userName,
+    needsOnboarding: !user.passwordHash,
+  });
 });
 
 export default authRoute;

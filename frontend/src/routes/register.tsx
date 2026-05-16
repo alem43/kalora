@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useState } from 'react'
 import { api, ApiError } from '#/lib/api'
+import { GoogleLogin, googleLogout } from '@react-oauth/google'
 
 export const Route = createFileRoute('/register')({
   component: RouteComponent,
@@ -258,7 +259,33 @@ function RouteComponent() {
                   >
                     Sign in
                   </Link>
+                  <br />
                 </p>
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    console.log('Google login clicked', credentialResponse)
+                    try {
+                      setServerError('')
+                      const res = await api.auth.googleLogin({
+                        credential: credentialResponse.credential,
+                      })
+
+                      if (res.needsOnboarding) {
+                        setFormData({
+                          email: res.email,
+                          userName: res.userName,
+                        })
+                        setCurrentStep(2)
+                      } else {
+                        navigate({ to: '/dashboard' })
+                      }
+                    } catch (error) {
+                      console.error('Google login error:', error)
+                      setServerError('Google login failed')
+                    }
+                  }}
+                  onError={() => setServerError('Google login failed')}
+                />
               </div>
             </div>
           )}

@@ -6,6 +6,14 @@ import {authMiddleware} from "../middleware/requireAuth.js";
 import {createFoodLogSchema} from "../utils/food-validation.js";
 import {AppError} from "../middleware/errorHandler.js";
 
+function detectMealType(date: Date) {
+  const h = date.getHours();
+  if (h >= 5 && h < 11) return "breakfast";
+  if (h >= 11 && h < 15) return "lunch";
+  if (h >= 17 && h < 22) return "dinner";
+  return "snack";
+}
+
 const food = new Hono();
 
 food.use("/", authMiddleware);
@@ -27,6 +35,14 @@ food.post("/", async (c) => {
   const body = await c.req.json();
   const data = createFoodLogSchema.parse(body);
 
+  const loggedAt = data.loggedAt ? new Date(data.loggedAt) : new Date();
+
+  if (isNaN(loggedAt.getTime())) {
+    throw new AppError(400, "Invalid loggedAt date", "INVALID_DATE");
+  }
+
+  const mealType = data.mealType || detectMealType(loggedAt);
+
   const result = await db
     .insert(foodLogs)
     .values({
@@ -37,7 +53,8 @@ food.post("/", async (c) => {
       protein: data.protein,
       carbs: data.carbs,
       fat: data.fat,
-      date: data.date,
+      mealType,
+      loggedAt,
     })
     .returning();
 
@@ -52,11 +69,7 @@ food.delete("/:id", async (c) => {
     throw new AppError(400, "Invalid food ID", "INVALID_ID");
   }
 
-  const log = await db
-    .select()
-    .from(foodLogs)
-    .where(eq(foodLogs.id, id))
-    .get();
+  const log = await db.select().from(foodLogs).where(eq(foodLogs.id, id)).get();
 
   if (!log || log.userId !== userId) {
     throw new AppError(404, "Food log not found", "NOT_FOUND");

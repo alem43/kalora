@@ -9,12 +9,7 @@ export const createFoodLogSchema = z.object({
   protein: z.number().nonnegative("Protein must be non-negative").max(1000),
   carbs: z.number().nonnegative("Carbs must be non-negative").max(1000),
   fat: z.number().nonnegative("Fat must be non-negative").max(1000),
-  date: z
-    .string()
-    .refine(
-      (val) => VALID_DATE_REGEX.test(val),
-      "Date must be in YYYY-MM-DD format",
-    ),
+  mealType: z.enum(["breakfast", "lunch", "dinner", "snack"]).optional(),
 });
 
 export type CreateFoodLogInput = z.infer<typeof createFoodLogSchema>;

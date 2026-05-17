@@ -13,7 +13,10 @@ export const foodLogs = sqliteTable(
     protein: integer("protein").notNull(),
     carbs: integer("carbs").notNull(),
     fat: integer("fat").notNull(),
-    date: text("date").notNull(),
+    mealType: text("meal_type", {
+      enum: ["breakfast", "lunch", "dinner", "snack"],
+    }).notNull(),
+    loggedAt: integer("logged_at", {mode: "timestamp"}).notNull(),
   },
   (table) => ({
     userIdIdx: index("food_logs_user_id_idx").on(table.userId),

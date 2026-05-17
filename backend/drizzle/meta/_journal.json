@@ -29,6 +29,13 @@
       "when": 1778525240326,
       "tag": "0003_cuddly_fantastic_four",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1779019537804,
+      "tag": "0004_lucky_pandemic",
+      "breakpoints": true
     }
   ]
 }

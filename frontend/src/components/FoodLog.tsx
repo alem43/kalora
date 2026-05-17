@@ -98,7 +98,6 @@ const FoodLog = ({ onFoodAdded }) => {
         protein: getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity),
         carbs: getNutrient(selected, NUTRIENT_IDS.CARBS, quantity),
         fat: getNutrient(selected, NUTRIENT_IDS.FAT, quantity),
-        date: new Date().toISOString().split('T')[0],
       }
 
       const createdFood = await api.food.create(newFood)
@@ -123,37 +122,51 @@ const FoodLog = ({ onFoodAdded }) => {
     }
   }
 
+  const groupedFoods = foods.reduce((acc, food) => {
+    const meal = food.mealType || 'snack'
+    if (!acc[meal]) acc[meal] = []
+    acc[meal].push(food)
+    return acc
+  }, {})
+
+  const mealOrder = ['breakfast', 'lunch', 'dinner', 'snack']
+
   return (
     <>
       <Drawer open={open} onOpenChange={setOpen}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-          {foods.map((food) => (
-            <div
-              key={food.id}
-              className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col justify-between"
-            >
-              <div>
-                <p className="text-lg font-semibold line-clamp-2">
-                  {food.foodName}
-                </p>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {food.calories} cal
-                </p>
-              </div>
-              <p className="text-sm text-muted-foreground">{food.quantity}g</p>
+        {mealOrder.map((mealType) => (
+          <div key={mealType} className="mb-8">
+            <h2 className="text-xl font-bold mb-4 capitalize">{mealType}</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+              {groupedFoods[mealType]?.map((food) => (
+                <div
+                  key={food.id}
+                  className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col justify-between"
+                >
+                  <div>
+                    <p className="text-lg font-semibold line-clamp-2">
+                      {food.foodName}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {food.calories} cal
+                    </p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {food.quantity}g
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-          <DrawerTrigger asChild>
-            <div className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col items-center justify-center cursor-pointer hover:scale-[1.02] transition">
-              <img
-                src={plusIcon}
-                alt="plus"
-                className="w-full h-full max-w-20"
-              />
-              <p>Add food</p>
-            </div>
-          </DrawerTrigger>
-        </div>
+          </div>
+        ))}
+
+        <DrawerTrigger asChild>
+          <div className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col items-center justify-center cursor-pointer hover:scale-[1.02] transition">
+            <img src={plusIcon} alt="plus" className="w-full h-full max-w-20" />
+            <p>Add food</p>
+          </div>
+        </DrawerTrigger>
+
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle className="text-2xl">Add Food</DrawerTitle>
@@ -182,7 +195,8 @@ const FoodLog = ({ onFoodAdded }) => {
                               {food.description}
                             </span>
                             <span className="text-xs text-muted-foreground">
-                              per 100g: {getNutrient(food, NUTRIENT_IDS.CALORIES)} cal
+                              per 100g:{' '}
+                              {getNutrient(food, NUTRIENT_IDS.CALORIES)} cal
                             </span>
                           </div>
                         </CommandItem>

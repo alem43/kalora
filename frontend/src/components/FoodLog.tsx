@@ -39,6 +39,7 @@ const FoodLog = ({ onFoodAdded }) => {
   const [results, setResults] = React.useState([])
   const [selected, setSelected] = React.useState(null)
   const [quantity, setQuantity] = React.useState(100)
+  const [timeInput, setTimeInput] = React.useState('')
   const [loading, setLoading] = React.useState(false)
   const [success, setSuccess] = React.useState(false)
   const [foods, setFoods] = React.useState([])
@@ -71,6 +72,17 @@ const FoodLog = ({ onFoodAdded }) => {
     fetchFoods()
   }, [])
 
+  useEffect(() => {
+    if (open) {
+      const now = new Date()
+      const minutes = Math.floor(now.getMinutes() / 5) * 5
+      now.setMinutes(minutes)
+      now.setSeconds(0)
+      const timeStr = now.toTimeString().slice(0, 5)
+      setTimeInput(timeStr)
+    }
+  }, [open])
+
   const fetchFoods = async () => {
     try {
       const data = await api.food.list()
@@ -89,7 +101,17 @@ const FoodLog = ({ onFoodAdded }) => {
   }
 
   const handleSubmit = async () => {
-    if (!selected || !quantity) return
+    if (!selected || !quantity || !timeInput) return
+
+    const [hours, minutes] = timeInput.split(':').map(Number)
+    const loggedAt = new Date()
+    loggedAt.setHours(hours, minutes, 0, 0)
+
+    const hour = loggedAt.getHours()
+    let mealType = 'snack'
+    if (hour >= 5 && hour < 11) mealType = 'breakfast'
+    else if (hour >= 11 && hour < 16) mealType = 'lunch'
+    else if (hour >= 16 && hour < 22) mealType = 'dinner'
 
     try {
       const newFood = {
@@ -99,6 +121,8 @@ const FoodLog = ({ onFoodAdded }) => {
         protein: getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity),
         carbs: getNutrient(selected, NUTRIENT_IDS.CARBS, quantity),
         fat: getNutrient(selected, NUTRIENT_IDS.FAT, quantity),
+        mealType: mealType,
+        loggedAt: loggedAt,
       }
 
       const createdFood = await api.food.create(newFood)
@@ -113,6 +137,7 @@ const FoodLog = ({ onFoodAdded }) => {
         setSearch('')
         setSelected(null)
         setQuantity(100)
+        setTimeInput('')
         setResults([])
       }, 1500)
     } catch (err) {
@@ -157,7 +182,6 @@ const FoodLog = ({ onFoodAdded }) => {
           .map((mealType) => {
             const totals = getMealTotals(groupedFoods[mealType])
             const verdict = getMealVerdict(groupedFoods[mealType])
-            console.log('Verdict for', mealType, ':', verdict)
 
             return (
               <div key={mealType} className="mb-8">
@@ -262,6 +286,16 @@ const FoodLog = ({ onFoodAdded }) => {
                     className="text-lg"
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="time">When did you eat this?</Label>
+                  <Input
+                    id="time"
+                    type="time"
+                    value={timeInput}
+                    onChange={(e) => setTimeInput(e.target.value)}
+                    className="text-lg"
+                  />
+                </div>
                 <div className="p-4 border rounded-lg">
                   <h3 className="font-semibold mb-3">
                     Nutrition ({quantity}g)
@@ -306,7 +340,7 @@ const FoodLog = ({ onFoodAdded }) => {
           <DrawerFooter>
             <Button
               onClick={handleSubmit}
-              disabled={!selected || !quantity || success}
+              disabled={!selected || !quantity || !timeInput || success}
               className={`w-full transition-all duration-300 ${
                 success ? 'bg-green-600 hover:bg-green-600' : ''
               }`}

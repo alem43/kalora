@@ -22,6 +22,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { api, ApiError } from '#/lib/api'
+import { getMealVerdict } from '../utils/mealVerdict'
 
 const API_KEY = import.meta.env.VITE_USDA_API_KEY || ''
 
@@ -155,6 +156,9 @@ const FoodLog = ({ onFoodAdded }) => {
           .filter((mealType) => groupedFoods[mealType]?.length > 0)
           .map((mealType) => {
             const totals = getMealTotals(groupedFoods[mealType])
+            const verdict = getMealVerdict(groupedFoods[mealType])
+            console.log('Verdict for', mealType, ':', verdict)
+
             return (
               <div key={mealType} className="mb-8">
                 <h2 className="text-xl font-bold mb-2 capitalize">
@@ -164,6 +168,9 @@ const FoodLog = ({ onFoodAdded }) => {
                   {totals.calories} cal · {totals.protein} proteins ·{' '}
                   {totals.carbs} carbs ·{totals.fat} fats
                 </p>
+                {verdict && (
+                  <p className="text-sm text-green-600 mb-4">{verdict}</p>
+                )}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {groupedFoods[mealType]?.map((food) => (
                     <div

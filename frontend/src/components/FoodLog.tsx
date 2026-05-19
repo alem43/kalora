@@ -129,44 +129,78 @@ const FoodLog = ({ onFoodAdded }) => {
     return acc
   }, {})
 
+  const getMealTotals = (foods) => {
+    return foods.reduce(
+      (totals, food) => ({
+        calories: totals.calories + food.calories,
+        protein: totals.protein + food.protein,
+        carbs: totals.carbs + food.carbs,
+        fat: totals.fat + food.fat,
+      }),
+      {
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      },
+    )
+  }
+
   const mealOrder = ['breakfast', 'lunch', 'dinner', 'snack']
 
   return (
     <>
       <Drawer open={open} onOpenChange={setOpen}>
-        {mealOrder.map((mealType) => (
-          <div key={mealType} className="mb-8">
-            <h2 className="text-xl font-bold mb-4 capitalize">{mealType}</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-              {groupedFoods[mealType]?.map((food) => (
-                <div
-                  key={food.id}
-                  className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col justify-between"
-                >
-                  <div>
-                    <p className="text-lg font-semibold line-clamp-2">
-                      {food.foodName}
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {food.calories} cal
-                    </p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {food.quantity}g
-                  </p>
+        {mealOrder
+          .filter((mealType) => groupedFoods[mealType]?.length > 0)
+          .map((mealType) => {
+            const totals = getMealTotals(groupedFoods[mealType])
+            return (
+              <div key={mealType} className="mb-8">
+                <h2 className="text-xl font-bold mb-2 capitalize">
+                  {mealType}
+                </h2>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {totals.calories} cal · {totals.protein} proteins ·{' '}
+                  {totals.carbs} carbs ·{totals.fat} fats
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+                  {groupedFoods[mealType]?.map((food) => (
+                    <div
+                      key={food.id}
+                      className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col justify-between"
+                    >
+                      <div>
+                        <p className="text-lg font-semibold line-clamp-2">
+                          {food.foodName}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-2">
+                          {food.calories} cal
+                        </p>
+                      </div>
+                      <div className="flex items-end justify-between mt-4">
+                        <p className="text-sm text-muted-foreground">
+                          {food.quantity}g
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(food.loggedAt).toLocaleTimeString([], {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
+              </div>
+            )
+          })}
         <DrawerTrigger asChild>
           <div className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col items-center justify-center cursor-pointer hover:scale-[1.02] transition">
             <img src={plusIcon} alt="plus" className="w-full h-full max-w-20" />
             <p>Add food</p>
           </div>
         </DrawerTrigger>
-
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle className="text-2xl">Add Food</DrawerTitle>

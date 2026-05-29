@@ -22,7 +22,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer'
 import { api, ApiError } from '#/lib/api'
-import { getMealVerdict } from '../utils/mealVerdict'
+import { generateMealVerdict } from '../lib/verdicts'
 
 const API_KEY = import.meta.env.VITE_USDA_API_KEY || ''
 
@@ -31,6 +31,8 @@ const NUTRIENT_IDS = {
   PROTEIN: 1003,
   CARBS: 1005,
   FAT: 1004,
+  FIBER: 1079,
+  SUGAR: 2000,
 }
 
 const FoodLog = ({ onFoodAdded }) => {
@@ -52,16 +54,22 @@ const FoodLog = ({ onFoodAdded }) => {
 
     const timer = setTimeout(async () => {
       setLoading(true)
+
       try {
         const res = await fetch(
-          `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(search)}&dataType=Foundation,SR Legacy&pageSize=10&api_key=${API_KEY}`,
+          `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(
+            search,
+          )}&dataType=Foundation,SR Legacy&pageSize=10&api_key=${API_KEY}`,
         )
+
         const data = await res.json()
+
         setResults(data.foods || [])
       } catch (err) {
         console.error('Search failed:', err)
         setResults([])
       }
+
       setLoading(false)
     }, 500)
 
@@ -76,9 +84,12 @@ const FoodLog = ({ onFoodAdded }) => {
     if (open) {
       const now = new Date()
       const minutes = Math.floor(now.getMinutes() / 5) * 5
+
       now.setMinutes(minutes)
       now.setSeconds(0)
+
       const timeStr = now.toTimeString().slice(0, 5)
+
       setTimeInput(timeStr)
     }
   }, [open])
@@ -96,7 +107,9 @@ const FoodLog = ({ onFoodAdded }) => {
     const nutrient = food.foodNutrients?.find(
       (n) => n.nutrientId === nutrientId,
     )
+
     const baseValue = nutrient ? nutrient.value : 0
+
     return Math.round((baseValue * qty) / 100)
   }
 
@@ -104,11 +117,15 @@ const FoodLog = ({ onFoodAdded }) => {
     if (!selected || !quantity || !timeInput) return
 
     const [hours, minutes] = timeInput.split(':').map(Number)
+
     const loggedAt = new Date()
+
     loggedAt.setHours(hours, minutes, 0, 0)
 
     const hour = loggedAt.getHours()
+
     let mealType = 'snack'
+
     if (hour >= 5 && hour < 11) mealType = 'breakfast'
     else if (hour >= 11 && hour < 16) mealType = 'lunch'
     else if (hour >= 16 && hour < 22) mealType = 'dinner'
@@ -121,14 +138,18 @@ const FoodLog = ({ onFoodAdded }) => {
         protein: getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity),
         carbs: getNutrient(selected, NUTRIENT_IDS.CARBS, quantity),
         fat: getNutrient(selected, NUTRIENT_IDS.FAT, quantity),
+        fiber: getNutrient(selected, NUTRIENT_IDS.FIBER, quantity),
+        sugar: getNutrient(selected, NUTRIENT_IDS.SUGAR, quantity),
         mealType: mealType,
         loggedAt: loggedAt,
       }
 
       const createdFood = await api.food.create(newFood)
+
       setFoods([...foods, createdFood])
 
       setSuccess(true)
+
       onFoodAdded?.()
 
       setTimeout(() => {
@@ -144,14 +165,18 @@ const FoodLog = ({ onFoodAdded }) => {
       if (err instanceof ApiError) {
         console.error('API error:', err.code, err.status)
       }
+
       console.error('Failed:', err)
     }
   }
 
   const groupedFoods = foods.reduce((acc, food) => {
     const meal = food.mealType || 'snack'
+
     if (!acc[meal]) acc[meal] = []
+
     acc[meal].push(food)
+
     return acc
   }, {})
 
@@ -162,12 +187,16 @@ const FoodLog = ({ onFoodAdded }) => {
         protein: totals.protein + food.protein,
         carbs: totals.carbs + food.carbs,
         fat: totals.fat + food.fat,
+        fiber: totals.fiber + (food.fiber || 0),
+        sugar: totals.sugar + (food.sugar || 0),
       }),
       {
         calories: 0,
         protein: 0,
         carbs: 0,
         fat: 0,
+        fiber: 0,
+        sugar: 0,
       },
     )
   }
@@ -181,8 +210,16 @@ const FoodLog = ({ onFoodAdded }) => {
           .filter((mealType) => groupedFoods[mealType]?.length > 0)
           .map((mealType) => {
             const totals = getMealTotals(groupedFoods[mealType])
-            const verdict = getMealVerdict(groupedFoods[mealType])
-
+            const verdict = generateMealVerdict({
+              category: mealType,
+              calories: totals.calories,
+              protein: totals.protein,
+              carbs: totals.carbs,
+              fats: totals.fat,
+              fiber: totals.fiber,
+              sugar: totals.sugar,
+              hour: new Date(groupedFoods[mealType][0].loggedAt).getHours(),
+            })
             return (
               <div key={mealType} className="mb-8">
                 <h2 className="text-xl font-bold mb-2 capitalize">
@@ -190,11 +227,25 @@ const FoodLog = ({ onFoodAdded }) => {
                 </h2>
                 <p className="text-sm text-muted-foreground mb-4">
                   {totals.calories} cal · {totals.protein} proteins ·{' '}
-                  {totals.carbs} carbs ·{totals.fat} fats
+                  {totals.carbs} carbs · {totals.fat} fats
                 </p>
-                {verdict && (
-                  <p className="text-sm text-green-600 mb-4">{verdict}</p>
-                )}
+                <div className="space-y-2 mb-4">
+                  {verdict.concerns.map((item) => (
+                    <p key={item.text} className="text-sm text-orange-600">
+                      ⚠️ {item.text}
+                    </p>
+                  ))}
+                  {verdict.positives.map((item) => (
+                    <p key={item.text} className="text-sm text-green-600">
+                      ✅ {item.text}
+                    </p>
+                  ))}
+                  {verdict.suggestions.map((item) => (
+                    <p key={item.text} className="text-sm text-blue-600">
+                      💡 {item.text}
+                    </p>
+                  ))}
+                </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
                   {groupedFoods[mealType]?.map((food) => (
                     <div

@@ -38,6 +38,12 @@ const Navbar = () => {
           Sign In
         </a>
         <a
+          href="/insights"
+          className="text-gray-500 hover:text-gray-900 transition-colors"
+        >
+          Insights
+        </a>
+        <a
           href="/register"
           className="bg-avocado-500 text-kalora-dark-green px-5 py-3 rounded-full hover:bg-avocado-400 transition-colors font-bold shadow-sm"
         >

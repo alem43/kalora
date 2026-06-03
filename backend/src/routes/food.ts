@@ -1,7 +1,7 @@
 import {Hono} from "hono";
 import {db} from "../db/index.js";
 import {foodLogs} from "../db/schema.js";
-import {eq} from "drizzle-orm";
+import {eq, and, gte} from "drizzle-orm";
 import {authMiddleware} from "../middleware/requireAuth.js";
 import {createFoodLogSchema} from "../utils/food-validation.js";
 import {AppError} from "../middleware/errorHandler.js";
@@ -16,7 +16,7 @@ function detectMealType(date: Date) {
 
 const food = new Hono();
 
-food.use("/", authMiddleware);
+food.use("*", authMiddleware);
 
 food.get("/", async (c) => {
   const userId = c.get("userId");
@@ -59,6 +59,62 @@ food.post("/", async (c) => {
     .returning();
 
   return c.json(result[0], 201);
+});
+
+food.get("/insights", async (c) => {
+  const userId = c.get("userId");
+
+  const sevenDaysAgo = new Date();
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+  const logs = await db
+    .select()
+    .from(foodLogs)
+    .where(
+      and(eq(foodLogs.userId, userId), gte(foodLogs.loggedAt, sevenDaysAgo)),
+    )
+    .all();
+
+  let lowProteinBreakfasts = 0;
+  let lateNightMeals = 0;
+  const proteinByDay: Record<string, number> = {};
+
+  for (const log of logs) {
+    const date = new Date(log.loggedAt);
+    const dayKey = date.toDateString();
+    proteinByDay[dayKey] = (proteinByDay[dayKey] || 0) + log.protein;
+
+    if (log.mealType === "breakfast" && log.protein < 20)
+      lowProteinBreakfasts++;
+
+    const hour = date.getHours();
+    if (hour >= 22 || hour < 5) lateNightMeals++;
+  }
+
+  const days = Object.keys(proteinByDay).length;
+  const avgDailyProtein =
+    days > 0
+      ? Math.round(
+          Object.values(proteinByDay).reduce((a, b) => a + b, 0) / days,
+        )
+      : 0;
+
+  const insights: string[] = [];
+  if (lowProteinBreakfasts >= 4)
+    insights.push("Low-protein breakfasts were a recurring pattern this week.");
+  if (lateNightMeals >= 3)
+    insights.push("Late-night eating occurred frequently this week.");
+  if (avgDailyProtein >= 100)
+    insights.push("Protein intake was solid this week. Keep it up.");
+  else if (avgDailyProtein > 0 && avgDailyProtein < 60)
+    insights.push(
+      "Protein intake was low this week. Aim for more high-protein foods.",
+    );
+
+  return c.json({
+    stats: {lowProteinBreakfasts, lateNightMeals, avgDailyProtein},
+    insights,
+  });
 });
 
 food.delete("/:id", async (c) => {

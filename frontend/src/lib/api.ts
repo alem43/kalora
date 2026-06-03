@@ -6,13 +6,22 @@ export interface ApiErrorResponse {
   details?: Array<{ path: string; message: string }>
 }
 
+export type InsightsResponse = {
+  stats: {
+    lowProteinBreakfasts: number
+    lateNightMeals: number
+    avgDailyProtein: number
+  }
+  insights: string[]
+}
+
 export class ApiError extends Error {
   constructor(
     public status: number,
     public code: string,
     public details?: Array<{ path: string; message: string }>,
   ) {
-    super(message || code)
+    super(code)
     this.name = 'ApiError'
   }
 }
@@ -89,5 +98,6 @@ export const api = {
       request(`/food/${id}`, {
         method: 'DELETE',
       }),
+    insights: () => request<InsightsResponse>('/food/insights'),
   },
 }

@@ -284,110 +284,123 @@ const FoodLog = ({ onFoodAdded }) => {
           </div>
         </DrawerTrigger>
         <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle className="text-2xl">Add Food</DrawerTitle>
-            {!selected ? (
-              <Command shouldFilter={false}>
-                <CommandInput
-                  placeholder="Search food "
-                  value={search}
-                  onValueChange={setSearch}
-                />
-                <CommandList>
-                  {loading && <CommandEmpty>Searching...</CommandEmpty>}
-                  {!loading && search && results.length === 0 && (
-                    <CommandEmpty>No results</CommandEmpty>
-                  )}
-                  {!loading && results.length > 0 && (
-                    <CommandGroup>
-                      {results.map((food) => (
-                        <CommandItem
-                          key={food.fdcId}
-                          onSelect={() => setSelected(food)}
-                          className="cursor-pointer"
-                        >
-                          <div className="flex flex-col w-full">
-                            <span className="font-medium">
-                              {food.description}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              per 100g:{' '}
-                              {getNutrient(food, NUTRIENT_IDS.CALORIES)} cal
-                            </span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  )}
-                </CommandList>
-              </Command>
-            ) : (
-              <div className="space-y-4">
-                <div className="p-3 bg-muted rounded-lg">
-                  <p className="font-semibold">{selected.description}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="quantity">Quantity (grams)</Label>
-                  <Input
-                    id="quantity"
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    min="1"
-                    className="text-lg"
+          <div className="overflow-y-auto">
+            <DrawerHeader>
+              <DrawerTitle className="text-2xl">Add Food</DrawerTitle>
+              {!selected ? (
+                <Command shouldFilter={false}>
+                  <CommandInput
+                    placeholder="Search food "
+                    value={search}
+                    onValueChange={setSearch}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="time">When did you eat this?</Label>
-                  <Input
-                    id="time"
-                    type="time"
-                    value={timeInput}
-                    onChange={(e) => setTimeInput(e.target.value)}
-                    className="text-lg"
-                  />
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <h3 className="font-semibold mb-3">
-                    Nutrition ({quantity}g)
-                  </h3>
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="text-center p-2 bg-muted rounded">
-                      <p className="text-2xl font-bold">
-                        {getNutrient(selected, NUTRIENT_IDS.CALORIES, quantity)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">Calories</p>
-                    </div>
-                    <div className="text-center p-2 bg-muted rounded">
-                      <p className="text-2xl font-bold">
-                        {getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity)}g
-                      </p>
-                      <p className="text-xs text-muted-foreground">Protein</p>
-                    </div>
-                    <div className="text-center p-2 bg-muted rounded">
-                      <p className="text-2xl font-bold">
-                        {getNutrient(selected, NUTRIENT_IDS.CARBS, quantity)}g
-                      </p>
-                      <p className="text-xs text-muted-foreground">Carbs</p>
-                    </div>
-                    <div className="text-center p-2 bg-muted rounded">
-                      <p className="text-2xl font-bold">
-                        {getNutrient(selected, NUTRIENT_IDS.FAT, quantity)}g
-                      </p>
-                      <p className="text-xs text-muted-foreground">Fat</p>
+                  <CommandList>
+                    {loading && <CommandEmpty>Searching...</CommandEmpty>}
+                    {!loading && search && results.length === 0 && (
+                      <CommandEmpty>No results</CommandEmpty>
+                    )}
+                    {!loading && results.length > 0 && (
+                      <CommandGroup>
+                        {results.map((food) => (
+                          <CommandItem
+                            key={food.fdcId}
+                            onSelect={() => setSelected(food)}
+                            className="cursor-pointer"
+                          >
+                            <div className="flex flex-col w-full">
+                              <span className="font-medium">
+                                {food.description}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                per 100g:{' '}
+                                {getNutrient(food, NUTRIENT_IDS.CALORIES)} cal
+                              </span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    )}
+                  </CommandList>
+                </Command>
+              ) : (
+                <div className="space-y-4">
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="font-semibold">{selected.description}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="quantity">Quantity (grams)</Label>
+                    <Input
+                      id="quantity"
+                      type="number"
+                      value={quantity}
+                      onChange={(e) => setQuantity(Number(e.target.value))}
+                      min="1"
+                      className="text-lg"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="time">When did you eat this?</Label>
+                    <Input
+                      id="time"
+                      type="time"
+                      value={timeInput}
+                      onChange={(e) => setTimeInput(e.target.value)}
+                      className="text-lg"
+                    />
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h3 className="font-semibold mb-3">
+                      Nutrition ({quantity}g)
+                    </h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="text-center p-2 bg-muted rounded">
+                        <p className="text-2xl font-bold">
+                          {getNutrient(
+                            selected,
+                            NUTRIENT_IDS.CALORIES,
+                            quantity,
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Calories
+                        </p>
+                      </div>
+                      <div className="text-center p-2 bg-muted rounded">
+                        <p className="text-2xl font-bold">
+                          {getNutrient(
+                            selected,
+                            NUTRIENT_IDS.PROTEIN,
+                            quantity,
+                          )}
+                          g
+                        </p>
+                        <p className="text-xs text-muted-foreground">Protein</p>
+                      </div>
+                      <div className="text-center p-2 bg-muted rounded">
+                        <p className="text-2xl font-bold">
+                          {getNutrient(selected, NUTRIENT_IDS.CARBS, quantity)}g
+                        </p>
+                        <p className="text-xs text-muted-foreground">Carbs</p>
+                      </div>
+                      <div className="text-center p-2 bg-muted rounded">
+                        <p className="text-2xl font-bold">
+                          {getNutrient(selected, NUTRIENT_IDS.FAT, quantity)}g
+                        </p>
+                        <p className="text-xs text-muted-foreground">Fat</p>
+                      </div>
                     </div>
                   </div>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    onClick={() => setSelected(null)}
+                  >
+                    Change Food
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => setSelected(null)}
-                >
-                  Change Food
-                </Button>
-              </div>
-            )}
-          </DrawerHeader>
+              )}
+            </DrawerHeader>
+          </div>
           <DrawerFooter>
             <Button
               onClick={handleSubmit}

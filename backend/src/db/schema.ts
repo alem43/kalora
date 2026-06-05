@@ -13,6 +13,8 @@ export const foodLogs = sqliteTable(
     protein: integer("protein").notNull(),
     carbs: integer("carbs").notNull(),
     fat: integer("fat").notNull(),
+    fiber: integer("fiber").notNull().default(0),
+    sugar: integer("sugar").notNull().default(0),
     mealType: text("meal_type", {
       enum: ["breakfast", "lunch", "dinner", "snack"],
     }).notNull(),

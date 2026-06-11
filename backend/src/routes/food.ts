@@ -20,13 +20,11 @@ food.use("*", authMiddleware);
 
 food.get("/", async (c) => {
   const userId = c.get("userId");
-
   const logs = await db
     .select()
     .from(foodLogs)
     .where(eq(foodLogs.userId, userId))
     .all();
-
   return c.json(logs);
 });
 
@@ -64,56 +62,123 @@ food.post("/", async (c) => {
 food.get("/insights", async (c) => {
   const userId = c.get("userId");
 
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   const logs = await db
     .select()
     .from(foodLogs)
     .where(
-      and(eq(foodLogs.userId, userId), gte(foodLogs.loggedAt, sevenDaysAgo)),
+      and(eq(foodLogs.userId, userId), gte(foodLogs.loggedAt, thirtyDaysAgo)),
     )
     .all();
 
-  let lowProteinBreakfasts = 0;
-  let lateNightMeals = 0;
-  const proteinByDay: Record<string, number> = {};
+  type Pattern = {
+    id: string;
+    detected: boolean;
+    message: string;
+    detail: string;
+  };
+
+  if (logs.length === 0) {
+    return c.json({
+      patterns: [] as Pattern[],
+      dataRange: {days: 30, totalLogs: 0},
+    });
+  }
+
+  let totalCalories = 0;
+  let lateCalories = 0;
+
+  const breakfastProteinByDay: Record<string, number> = {};
+  const weekdayCaloriesByDay: Record<string, number> = {};
+  const weekendCaloriesByDay: Record<string, number> = {};
 
   for (const log of logs) {
     const date = new Date(log.loggedAt);
-    const dayKey = date.toDateString();
-    proteinByDay[dayKey] = (proteinByDay[dayKey] || 0) + log.protein;
-
-    if (log.mealType === "breakfast" && log.protein < 20)
-      lowProteinBreakfasts++;
-
     const hour = date.getHours();
-    if (hour >= 22 || hour < 5) lateNightMeals++;
+    const dayKey = date.toDateString();
+    const dow = date.getDay(); // 0 = Sun, 6 = Sat
+    const isWeekend = dow === 0 || dow === 6;
+
+    totalCalories += log.calories;
+    if (hour >= 20) lateCalories += log.calories;
+
+    if (log.mealType === "breakfast") {
+      breakfastProteinByDay[dayKey] =
+        (breakfastProteinByDay[dayKey] || 0) + log.protein;
+    }
+
+    if (isWeekend) {
+      weekendCaloriesByDay[dayKey] =
+        (weekendCaloriesByDay[dayKey] || 0) + log.calories;
+    } else {
+      weekdayCaloriesByDay[dayKey] =
+        (weekdayCaloriesByDay[dayKey] || 0) + log.calories;
+    }
   }
 
-  const days = Object.keys(proteinByDay).length;
-  const avgDailyProtein =
-    days > 0
+  const lateCaloriePct =
+    totalCalories > 0 ? Math.round((lateCalories / totalCalories) * 100) : 0;
+
+  const breakfastDayKeys = Object.keys(breakfastProteinByDay);
+  const avgBreakfastProtein =
+    breakfastDayKeys.length > 0
       ? Math.round(
-          Object.values(proteinByDay).reduce((a, b) => a + b, 0) / days,
+          Object.values(breakfastProteinByDay).reduce((a, b) => a + b, 0) /
+            breakfastDayKeys.length,
         )
       : 0;
 
-  const insights: string[] = [];
-  if (lowProteinBreakfasts >= 4)
-    insights.push("Low-protein breakfasts were a recurring pattern this week.");
-  if (lateNightMeals >= 3)
-    insights.push("Late-night eating occurred frequently this week.");
-  if (avgDailyProtein >= 100)
-    insights.push("Protein intake was solid this week. Keep it up.");
-  else if (avgDailyProtein > 0 && avgDailyProtein < 60)
-    insights.push(
-      "Protein intake was low this week. Aim for more high-protein foods.",
-    );
+  const weekdayDayKeys = Object.keys(weekdayCaloriesByDay);
+  const weekendDayKeys = Object.keys(weekendCaloriesByDay);
+  const avgWeekdayCalories =
+    weekdayDayKeys.length > 0
+      ? Math.round(
+          Object.values(weekdayCaloriesByDay).reduce((a, b) => a + b, 0) /
+            weekdayDayKeys.length,
+        )
+      : 0;
+  const avgWeekendCalories =
+    weekendDayKeys.length > 0
+      ? Math.round(
+          Object.values(weekendCaloriesByDay).reduce((a, b) => a + b, 0) /
+            weekendDayKeys.length,
+        )
+      : 0;
+  const hasWeekComparison =
+    weekdayDayKeys.length >= 3 && weekendDayKeys.length >= 2;
+
+  const patterns: Pattern[] = [
+    {
+      id: "late_calories",
+      detected: lateCaloriePct >= 40,
+      message: "You eat most of your calories after 8 PM.",
+      detail: `${lateCaloriePct}% of your calories come from meals logged after 8 PM`,
+    },
+    {
+      id: "low_breakfast_protein",
+      detected: breakfastDayKeys.length >= 3 && avgBreakfastProtein < 20,
+      message: "Your protein intake is consistently low at breakfast.",
+      detail:
+        breakfastDayKeys.length >= 3
+          ? `Average ${avgBreakfastProtein}g of protein per breakfast`
+          : "Not enough breakfast logs to detect a pattern",
+    },
+    {
+      id: "weekend_calories",
+      detected:
+        hasWeekComparison && avgWeekendCalories > avgWeekdayCalories * 1.2,
+      message: "You consume significantly more calories on weekends.",
+      detail: hasWeekComparison
+        ? `Weekdays avg ${avgWeekdayCalories} cal · Weekends avg ${avgWeekendCalories} cal`
+        : "Not enough data to compare weekday vs weekend eating",
+    },
+  ];
 
   return c.json({
-    stats: {lowProteinBreakfasts, lateNightMeals, avgDailyProtein},
-    insights,
+    patterns,
+    dataRange: {days: 30, totalLogs: logs.length},
   });
 });
 

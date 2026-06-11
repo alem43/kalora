@@ -7,12 +7,16 @@ export interface ApiErrorResponse {
 }
 
 export type InsightsResponse = {
-  stats: {
-    lowProteinBreakfasts: number
-    lateNightMeals: number
-    avgDailyProtein: number
+  patterns: Array<{
+    id: string
+    detected: boolean
+    message: string
+    detail: string
+  }>
+  dataRange: {
+    days: number
+    totalLogs: number
   }
-  insights: string[]
 }
 
 export class ApiError extends Error {

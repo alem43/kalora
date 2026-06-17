@@ -1,10 +1,11 @@
 import {serve} from "@hono/node-server";
 import {Hono} from "hono";
 import {cors} from "hono/cors";
+import {z} from "zod";
 import foodRoute from "./routes/food.js";
 import authRoute from "./routes/auth-route.js";
 import {authMiddleware} from "./middleware/requireAuth.js";
-import {errorHandler} from "./middleware/errorHandler.js";
+import {AppError} from "./middleware/errorHandler.js"; // ← ADD THIS LINE
 
 const app = new Hono();
 
@@ -19,21 +20,49 @@ app.use(
   }),
 );
 
-app.use("*", errorHandler);
-
 app.get("/", (c) => c.text("Hello Hono!"));
-
 app.get("/health", (c) => c.text("ok"));
 
 app.route("/food", foodRoute);
-
 app.route("/auth", authRoute);
 
 app.use("/protected", authMiddleware);
-
 app.get("/protected", (c) => {
   const user = c.get("user");
   return c.text(`ok protected: ${user.email}`);
+});
+
+// Global error handler – now with the correct import
+app.onError((err, c) => {
+  console.error("Error:", err);
+
+  let status = 500;
+  let body: any = {error: "Internal server error", code: "INTERNAL_ERROR"};
+
+  if (err instanceof AppError) {
+    status = err.status;
+    body = {error: err.message, code: err.code};
+  } else if (err instanceof z.ZodError) {
+    status = 400;
+    body = {
+      error: "Validation failed",
+      code: "VALIDATION_ERROR",
+      details: err.errors.map((e) => ({
+        path: e.path.join("."),
+        message: e.message,
+      })),
+    };
+  }
+
+  // Explicitly construct a Response with CORS headers
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": FRONTEND_URL,
+      "Access-Control-Allow-Credentials": "true",
+    },
+  });
 });
 
 serve(

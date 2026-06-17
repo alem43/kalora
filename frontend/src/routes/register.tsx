@@ -4,57 +4,58 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useState } from 'react'
 import { api, ApiError } from '#/lib/api'
-import { GoogleLogin, googleLogout } from '@react-oauth/google'
+import { GoogleLogin } from '@react-oauth/google'
 
 export const Route = createFileRoute('/register')({
   component: RouteComponent,
 })
 
+const step1Schema = z
+  .object({
+    userName: z
+      .string()
+      .min(3, 'Username must be at least 3 characters')
+      .max(20, 'Username must be at most 20 characters')
+      .regex(/^[a-zA-Z0-9_]+$/, 'Only letters, numbers, and underscores'),
+    email: z.string().email('Please enter a valid email'),
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(50),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+
+const step2Schema = z.object({
+  gender: z.enum(['male', 'female', 'other'], {
+    required_error: 'Please select your gender',
+  }),
+  age: z.number().min(13, 'Must be at least 13').max(120),
+  height: z.number().min(100, 'Height must be at least 100cm').max(250),
+  weight: z.number().min(30, 'Weight must be at least 30kg').max(300),
+  goalWeight: z.number().min(30).max(300).optional(),
+  activityLevel: z.enum([
+    'sedentary',
+    'light',
+    'moderate',
+    'active',
+    'very_active',
+  ]),
+  goal: z.enum(['lose_weight', 'maintain', 'gain_weight', 'build_muscle']),
+})
+
+type Step1Values = z.infer<typeof step1Schema>
+type Step2Values = z.infer<typeof step2Schema>
+type CombinedFormData = Partial<Step1Values> & Partial<Step2Values>
+
 function RouteComponent() {
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
   const [serverError, setServerError] = useState<string>('')
-  const [formData, setFormData] = useState<any>({})
-
-  const step1Schema = z
-    .object({
-      userName: z
-        .string()
-        .min(3, 'Username must be at least 3 characters')
-        .max(20, 'Username must be at most 20 characters')
-        .regex(/^[a-zA-Z0-9_]+$/, 'Only letters, numbers, and underscores'),
-      email: z.string().email('Please enter a valid email'),
-      password: z
-        .string()
-        .min(8, 'Password must be at least 8 characters')
-        .max(50),
-      confirmPassword: z.string(),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: 'Passwords do not match',
-      path: ['confirmPassword'],
-    })
-
-  const step2Schema = z.object({
-    gender: z.enum(['male', 'female', 'other'], {
-      required_error: 'Please select your gender',
-    }),
-    age: z.number().min(13, 'Must be at least 13').max(120),
-    height: z.number().min(100, 'Height must be at least 100cm').max(250),
-    weight: z.number().min(30, 'Weight must be at least 30kg').max(300),
-    goalWeight: z.number().min(30).max(300).optional(),
-    activityLevel: z.enum([
-      'sedentary',
-      'light',
-      'moderate',
-      'active',
-      'very_active',
-    ]),
-    goal: z.enum(['lose_weight', 'maintain', 'gain_weight', 'build_muscle']),
-  })
-
-  type Step1Values = z.infer<typeof step1Schema>
-  type Step2Values = z.infer<typeof step2Schema>
+  const [formData, setFormData] = useState<CombinedFormData>({})
 
   const step1Form = useForm<Step1Values>({
     resolver: zodResolver(step1Schema),
@@ -69,7 +70,7 @@ function RouteComponent() {
   })
 
   const onStep1Submit = (data: Step1Values) => {
-    setFormData({ ...formData, ...data })
+    setFormData((prev) => ({ ...prev, ...data }))
     setCurrentStep(2)
   }
 
@@ -79,16 +80,16 @@ function RouteComponent() {
       const completeData = { ...formData, ...data }
 
       await api.auth.register({
-        userName: completeData.userName,
-        email: completeData.email,
-        password: completeData.password,
-        gender: completeData.gender,
-        age: completeData.age,
-        height: completeData.height,
-        weight: completeData.weight,
+        userName: completeData.userName!,
+        email: completeData.email!,
+        password: completeData.password, // Handled seamlessly if OAuth user has no password
+        gender: completeData.gender!,
+        age: completeData.age!,
+        height: completeData.height!,
+        weight: completeData.weight!,
         goalWeight: completeData.goalWeight,
-        activityLevel: completeData.activityLevel,
-        goal: completeData.goal,
+        activityLevel: completeData.activityLevel!,
+        goal: completeData.goal!,
       })
 
       setCurrentStep(3)
@@ -111,8 +112,9 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-blue-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#82B85A] to-blue-50 px-4 py-8">
       <div className="w-full max-w-2xl">
+        {/* Progress Tracker */}
         <div className="mb-8">
           <div className="flex items-center justify-center">
             {[1, 2, 3].map((step) => (
@@ -120,7 +122,7 @@ function RouteComponent() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition ${
                     currentStep >= step
-                      ? 'bg-green-600 text-white'
+                      ? 'bg-[#82B85A] text-white'
                       : 'bg-gray-200 text-gray-500'
                   }`}
                 >
@@ -129,7 +131,7 @@ function RouteComponent() {
                 {step < 3 && (
                   <div
                     className={`w-20 h-1 mx-2 transition ${
-                      currentStep > step ? 'bg-green-600' : 'bg-gray-200'
+                      currentStep > step ? 'bg-[#82B85A]' : 'bg-gray-200'
                     }`}
                   />
                 )}
@@ -144,12 +146,16 @@ function RouteComponent() {
             </p>
           </div>
         </div>
+
+        {/* Card Content */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {serverError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{serverError}</p>
             </div>
           )}
+
+          {/* STEP 1: Account Details */}
           {currentStep === 1 && (
             <div>
               <div className="text-center mb-8">
@@ -174,7 +180,7 @@ function RouteComponent() {
                     type="text"
                     id="userName"
                     autoFocus
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     placeholder="johndoe"
                   />
                   {step1Form.formState.errors.userName && (
@@ -183,6 +189,7 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <label
                     htmlFor="email"
@@ -194,7 +201,7 @@ function RouteComponent() {
                     {...step1Form.register('email')}
                     type="email"
                     id="email"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     placeholder="you@example.com"
                   />
                   {step1Form.formState.errors.email && (
@@ -203,6 +210,7 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <label
                     htmlFor="password"
@@ -214,7 +222,7 @@ function RouteComponent() {
                     {...step1Form.register('password')}
                     type="password"
                     id="password"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     placeholder="••••••••"
                   />
                   {step1Form.formState.errors.password && (
@@ -223,6 +231,7 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
+
                 <div>
                   <label
                     htmlFor="confirmPassword"
@@ -234,7 +243,7 @@ function RouteComponent() {
                     {...step1Form.register('confirmPassword')}
                     type="password"
                     id="confirmPassword"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     placeholder="••••••••"
                   />
                   {step1Form.formState.errors.confirmPassword && (
@@ -243,14 +252,16 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
+
                 <button
                   type="submit"
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition"
+                  className="w-full bg-[#82B85A] hover:bg-[#73a54d] text-white font-semibold py-3 rounded-lg transition"
                 >
                   Continue
                 </button>
               </form>
-              <div className="mt-6 text-center">
+
+              <div className="mt-6 text-center space-y-4">
                 <p className="text-sm text-gray-600">
                   Already have an account?{' '}
                   <Link
@@ -259,36 +270,38 @@ function RouteComponent() {
                   >
                     Sign in
                   </Link>
-                  <br />
                 </p>
-                <GoogleLogin
-                  onSuccess={async (credentialResponse) => {
-                    console.log('Google login clicked', credentialResponse)
-                    try {
-                      setServerError('')
-                      const res = await api.auth.googleLogin({
-                        credential: credentialResponse.credential,
-                      })
-
-                      if (res.needsOnboarding) {
-                        setFormData({
-                          email: res.email,
-                          userName: res.userName,
+                <div className="flex justify-center">
+                  <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                      try {
+                        setServerError('')
+                        const res = await api.auth.googleLogin({
+                          credential: credentialResponse.credential,
                         })
-                        setCurrentStep(2)
-                      } else {
-                        navigate({ to: '/dashboard' })
+
+                        if (res.needsOnboarding) {
+                          setFormData({
+                            email: res.email,
+                            userName: res.userName,
+                          })
+                          setCurrentStep(2)
+                        } else {
+                          navigate({ to: '/dashboard' })
+                        }
+                      } catch (error) {
+                        console.error('Google login error:', error)
+                        setServerError('Google login failed')
                       }
-                    } catch (error) {
-                      console.error('Google login error:', error)
-                      setServerError('Google login failed')
-                    }
-                  }}
-                  onError={() => setServerError('Google login failed')}
-                />
+                    }}
+                    onError={() => setServerError('Google login failed')}
+                  />
+                </div>
               </div>
             </div>
           )}
+
+          {/* STEP 2: Personal Information */}
           {currentStep === 2 && (
             <div>
               <div className="text-center mb-8">
@@ -310,7 +323,7 @@ function RouteComponent() {
                     </label>
                     <select
                       {...step2Form.register('gender')}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     >
                       <option value="">Select...</option>
                       <option value="male">Male</option>
@@ -334,7 +347,7 @@ function RouteComponent() {
                       {...step2Form.register('age', { valueAsNumber: true })}
                       type="number"
                       id="age"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                       placeholder="25"
                     />
                     {step2Form.formState.errors.age && (
@@ -344,6 +357,7 @@ function RouteComponent() {
                     )}
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label
@@ -356,7 +370,7 @@ function RouteComponent() {
                       {...step2Form.register('height', { valueAsNumber: true })}
                       type="number"
                       id="height"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                       placeholder="170"
                     />
                     {step2Form.formState.errors.height && (
@@ -376,7 +390,7 @@ function RouteComponent() {
                       {...step2Form.register('weight', { valueAsNumber: true })}
                       type="number"
                       id="weight"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                       placeholder="70"
                     />
                     {step2Form.formState.errors.weight && (
@@ -386,6 +400,7 @@ function RouteComponent() {
                     )}
                   </div>
                 </div>
+
                 <div>
                   <label
                     htmlFor="goalWeight"
@@ -400,17 +415,18 @@ function RouteComponent() {
                     })}
                     type="number"
                     id="goalWeight"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                     placeholder="65"
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Activity Level
                   </label>
                   <select
                     {...step2Form.register('activityLevel')}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                   >
                     <option value="sedentary">
                       Sedentary (little to no exercise)
@@ -430,7 +446,7 @@ function RouteComponent() {
                   </label>
                   <select
                     {...step2Form.register('goal')}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition outline-none"
+                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#82B85A] focus:border-transparent transition outline-none"
                   >
                     <option value="lose_weight">Lose Weight</option>
                     <option value="maintain">Maintain Weight</option>
@@ -438,6 +454,7 @@ function RouteComponent() {
                     <option value="build_muscle">Build Muscle</option>
                   </select>
                 </div>
+
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -449,7 +466,7 @@ function RouteComponent() {
                   <button
                     type="submit"
                     disabled={step2Form.formState.isSubmitting}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
+                    className="flex-1 bg-[#82B85A] hover:bg-[#73a54d] text-white font-semibold py-3 rounded-lg transition disabled:opacity-50"
                   >
                     {step2Form.formState.isSubmitting
                       ? 'Creating...'
@@ -459,12 +476,14 @@ function RouteComponent() {
               </form>
             </div>
           )}
+
+          {/* STEP 3: Success Screen */}
           {currentStep === 3 && (
             <div className="text-center py-8">
               <div className="mb-6">
                 <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto animate-bounce">
                   <svg
-                    className="w-10 h-10 text-green-600"
+                    className="w-10 h-10 text-[#82B85A]"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -487,7 +506,7 @@ function RouteComponent() {
               </p>
               <button
                 onClick={() => navigate({ to: '/dashboard' })}
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-lg transition"
+                className="bg-[#82B85A] hover:bg-[#73a54d] text-white font-semibold px-8 py-3 rounded-lg transition"
               >
                 Go to Dashboard
               </button>

@@ -62,7 +62,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
   const [loading, setLoading] = useState(false)
   const [logged, setLogged] = useState(false)
 
-  // Reset state when dialog opens
   useEffect(() => {
     if (open) {
       setSearch('')
@@ -74,7 +73,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
     }
   }, [open])
 
-  // USDA food search (debounced)
   useEffect(() => {
     if (!search || search.length < 2) {
       setResults([])
@@ -106,7 +104,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
     return Math.round((base * qty) / 100)
   }
 
-  // Recompute nutrients live as quantity changes
   const nutrients = useMemo(() => {
     if (!selected) return null
     return {
@@ -119,7 +116,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
     }
   }, [selected, quantity])
 
-  // Recompute verdict live as nutrients or meal type changes
   const verdict = useMemo(() => {
     if (!nutrients) return null
     return generateMealVerdict({
@@ -166,33 +162,48 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="rounded-3xl box-shadow p-5 min-h-40 flex flex-col items-center justify-center cursor-pointer hover:scale-[1.02] transition gap-2">
-          <span className="text-3xl">🤔</span>
-          <p className="font-semibold text-center">Should I eat this?</p>
-          <p className="text-xs text-muted-foreground text-center">
-            Check before you eat
+        <div className="w-full bg-[#F4F9F1] border border-[#E2EEDB] rounded-2xl p-5 flex flex-col items-center justify-center cursor-pointer hover:border-[#82B85A] hover:bg-white hover:shadow-sm transition-all duration-300 group gap-1">
+          <span className="text-2xl group-hover:scale-110 transition-transform duration-300">
+            🤔
+          </span>
+          <p className="font-extrabold text-[#173A27] text-sm mt-1">
+            Execute Sync Audit
+          </p>
+          <p className="text-[11px] text-gray-400 font-medium">
+            Verify compatibility indexes live
           </p>
         </div>
       </DialogTrigger>
 
-      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Should I eat this?</DialogTitle>
+      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-[#FAFCF8] text-[#173A27] rounded-[2.5rem] border border-[#E2EEDB] p-6 shadow-xl">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-2xl font-extrabold tracking-tight text-[#173A27]">
+            Metabolic Sync Audit
+          </DialogTitle>
         </DialogHeader>
 
         {!selected ? (
-          // Phase 1: search
-          <Command shouldFilter={false}>
+          <Command
+            shouldFilter={false}
+            className="bg-white rounded-2xl border border-[#E2EEDB] overflow-hidden shadow-sm"
+          >
             <CommandInput
-              placeholder="Search food..."
+              placeholder="Query structural profile registry..."
               value={search}
               onValueChange={setSearch}
+              className="border-none font-medium h-12 focus:ring-0 text-sm"
               autoFocus
             />
-            <CommandList>
-              {loading && <CommandEmpty>Searching...</CommandEmpty>}
+            <CommandList className="border-t border-[#F4F9F1]">
+              {loading && (
+                <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                  Querying USDA Registry...
+                </CommandEmpty>
+              )}
               {!loading && search && results.length === 0 && (
-                <CommandEmpty>No results</CommandEmpty>
+                <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                  No records found.
+                </CommandEmpty>
               )}
               {!loading && results.length > 0 && (
                 <CommandGroup>
@@ -200,15 +211,14 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                     <CommandItem
                       key={food.fdcId}
                       onSelect={() => setSelected(food)}
-                      className="cursor-pointer"
+                      className="cursor-pointer p-3 hover:bg-[#F4F9F1] transition-colors flex flex-col items-start gap-0.5 border-b border-[#FAFCF8] last:border-none"
                     >
-                      <div className="flex flex-col w-full">
-                        <span className="font-medium">{food.description}</span>
-                        <span className="text-xs text-muted-foreground">
-                          per 100g: {getNutrient(food, NUTRIENT_IDS.CALORIES)}{' '}
-                          cal
-                        </span>
-                      </div>
+                      <span className="font-bold text-sm text-[#173A27]">
+                        {food.description}
+                      </span>
+                      <span className="text-xs text-[#82B85A] font-semibold">
+                        {getNutrient(food, NUTRIENT_IDS.CALORIES)} kcal / 100g
+                      </span>
                     </CommandItem>
                   ))}
                 </CommandGroup>
@@ -216,25 +226,30 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
             </CommandList>
           </Command>
         ) : (
-          // Phase 2: verdict
           <div className="space-y-5">
-            {/* Selected food header */}
             <div className="flex items-center gap-2">
-              <div className="flex-1 p-3 bg-muted rounded-xl">
-                <p className="font-semibold text-sm">{selected.description}</p>
+              <div className="flex-1 p-3 bg-white rounded-xl border border-[#E2EEDB]">
+                <p className="font-bold text-xs text-[#173A27] line-clamp-2">
+                  {selected.description}
+                </p>
               </div>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => setSelected(null)}
+                className="text-gray-400 hover:text-[#805033] h-10 w-10 rounded-full shrink-0"
               >
                 ✕
               </Button>
             </div>
 
-            {/* Quantity */}
-            <div className="space-y-1">
-              <Label htmlFor="qty">Quantity (g)</Label>
+            <div className="space-y-1.5">
+              <Label
+                htmlFor="qty"
+                className="text-xs font-bold text-[#173A27] px-1"
+              >
+                Quantity (g)
+              </Label>
               <Input
                 id="qty"
                 type="number"
@@ -243,20 +258,26 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                   setQuantity(Math.max(1, Number(e.target.value)))
                 }
                 min="1"
+                className="bg-white border-[#E2EEDB] rounded-xl h-11 focus-visible:ring-[#82B85A]/20"
               />
             </div>
 
-            {/* Meal type selector */}
-            <div className="space-y-1">
-              <Label>Meal type</Label>
-              <div className="flex gap-2 flex-wrap">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-[#173A27] px-1">
+                Target Mapping Interval
+              </Label>
+              <div className="flex gap-1.5 flex-wrap">
                 {MEAL_CATEGORIES.map((cat) => (
                   <Button
                     key={cat}
                     size="sm"
                     variant={mealCategory === cat ? 'default' : 'outline'}
                     onClick={() => setMealCategory(cat)}
-                    className="capitalize"
+                    className={`capitalize rounded-xl text-xs font-bold px-3 py-1.5 ${
+                      mealCategory === cat
+                        ? 'bg-[#173A27] text-white hover:bg-[#173A27]'
+                        : 'bg-white border-[#E2EEDB] text-[#173A27] hover:bg-[#F4F9F1]'
+                    }`}
                   >
                     {cat}
                   </Button>
@@ -264,9 +285,8 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
               </div>
             </div>
 
-            {/* Nutrition grid */}
             {nutrients && (
-              <div className="grid grid-cols-3 gap-2 text-center">
+              <div className="grid grid-cols-3 gap-2 text-center p-3 bg-white border border-[#E2EEDB] rounded-2xl">
                 {[
                   { label: 'Cal', value: nutrients.calories },
                   { label: 'Protein', value: `${nutrients.protein}g` },
@@ -275,48 +295,70 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                   { label: 'Fiber', value: `${nutrients.fiber}g` },
                   { label: 'Sugar', value: `${nutrients.sugar}g` },
                 ].map(({ label, value }) => (
-                  <div key={label} className="p-2 bg-muted rounded-lg">
-                    <p className="text-lg font-bold">{value}</p>
-                    <p className="text-xs text-muted-foreground">{label}</p>
+                  <div
+                    key={label}
+                    className="p-2 bg-[#FAFCF8] rounded-xl border border-[#F4F9F1]"
+                  >
+                    <p className="text-sm font-extrabold text-[#173A27]">
+                      {value}
+                    </p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      {label}
+                    </p>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Live verdict */}
             {hasVerdict && (
-              <div className="rounded-2xl border p-4 space-y-2">
-                <p className="font-semibold text-sm mb-1">Verdict</p>
+              <div className="rounded-2xl border border-[#E2EEDB] bg-white p-4 space-y-2">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-1">
+                  Live Audit Verdict
+                </p>
                 {verdict!.concerns.map((item) => (
-                  <p key={item.text} className="text-sm text-orange-600">
-                    ⚠️ {item.text}
+                  <p
+                    key={item.text}
+                    className="text-xs font-bold text-[#805033] flex items-center gap-1.5"
+                  >
+                    <span className="shrink-0 text-sm">⚠️</span> {item.text}
                   </p>
                 ))}
                 {verdict!.positives.map((item) => (
-                  <p key={item.text} className="text-sm text-green-600">
-                    ✅ {item.text}
+                  <p
+                    key={item.text}
+                    className="text-xs font-bold text-[#82B85A] flex items-center gap-1.5"
+                  >
+                    <span className="shrink-0 text-sm">✅</span> {item.text}
                   </p>
                 ))}
                 {verdict!.suggestions.map((item) => (
-                  <p key={item.text} className="text-sm text-blue-600">
-                    💡 {item.text}
+                  <p
+                    key={item.text}
+                    className="text-xs font-bold text-[#173A27] flex items-center gap-1.5"
+                  >
+                    <span className="shrink-0 text-sm">💡</span> {item.text}
                   </p>
                 ))}
               </div>
             )}
 
-            {/* Actions */}
-            <div className="flex gap-2">
+            <div className="flex gap-3 border-t border-[#E2EEDB] pt-4 mt-2">
               <Button
-                className={`flex-1 transition-all duration-300 ${
-                  logged ? 'bg-green-600 hover:bg-green-600' : ''
+                className={`flex-1 h-12 rounded-full font-bold text-sm transition-all duration-300 ${
+                  logged
+                    ? 'bg-[#82B85A] hover:bg-[#82B85A] text-white'
+                    : 'bg-[#173A27] text-white hover:bg-[#204E35]'
                 }`}
                 onClick={handleLog}
                 disabled={logged}
               >
-                {logged ? '✓ Logged!' : 'Log it anyway'}
+                {logged ? '✓ Added to Track' : 'Log Profile Anyway'}
               </Button>
-              <Button variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                variant="outline"
+                className="h-12 rounded-full border-[#E2EEDB] font-bold text-sm px-6"
+                onClick={() => setOpen(false)}
+              >
                 Skip
               </Button>
             </div>

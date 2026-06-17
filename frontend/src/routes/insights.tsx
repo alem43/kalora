@@ -2,6 +2,7 @@ import Navbar from '#/components/Navbar'
 import { api, type InsightsResponse } from '#/lib/api'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { BrowserRouter } from 'react-router-dom'
 
 export const Route = createFileRoute('/insights')({
   component: RouteComponent,
@@ -91,7 +92,9 @@ function RouteComponent() {
 
   return (
     <>
-      <Navbar />
+      <BrowserRouter>
+        <Navbar />
+      </BrowserRouter>
       <div className="max-w-xl mx-auto p-4 space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Insights</h1>

@@ -222,8 +222,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     <span>{totals.fat}g F</span>
                   </div>
                 </div>
-
-                {/* Verdict Logs */}
                 {(verdict.concerns.length > 0 ||
                   verdict.positives.length > 0 ||
                   verdict.suggestions.length > 0) && (
@@ -254,8 +252,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     ))}
                   </div>
                 )}
-
-                {/* Food Cards Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {groupedFoods[mealType]?.map((food: any) => (
                     <div
@@ -287,8 +283,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
               </div>
             )
           })}
-
-        {/* Global Entry Card Trigger */}
         <DrawerTrigger asChild>
           <div className="rounded-[2rem] border border-dashed border-[#82B85A]/40 bg-white p-6 min-h-36 flex flex-col items-center justify-center cursor-pointer hover:border-[#82B85A] hover:bg-[#F4F9F1]/30 transition-all duration-300 group">
             <div className="w-12 h-12 rounded-full bg-[#F4F9F1] border border-[#E2EEDB] flex items-center justify-center mb-2 group-hover:bg-[#82B85A] transition-colors duration-300">
@@ -303,8 +297,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
             </p>
           </div>
         </DrawerTrigger>
-
-        {/* Entry Drawer Window Styling */}
         <DrawerContent className="bg-[#FAFCF8] text-[#173A27] rounded-t-[2.5rem] border-t border-[#E2EEDB] max-h-[90vh]">
           <div className="overflow-y-auto max-w-lg mx-auto w-full px-6 py-4">
             <DrawerHeader className="px-0">
@@ -312,7 +304,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                 Log Food Profile
               </DrawerTitle>
             </DrawerHeader>
-
             {!selected ? (
               <Command
                 shouldFilter={false}
@@ -363,7 +354,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     {selected.description}
                   </p>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label
@@ -397,8 +387,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     />
                   </div>
                 </div>
-
-                {/* Micro Nutrients Breakdown */}
                 <div className="p-4 bg-white border border-[#E2EEDB] rounded-2xl">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
                     Calculated Indexing ({quantity}g)
@@ -438,7 +426,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     </div>
                   </div>
                 </div>
-
                 <Button
                   variant="outline"
                   className="w-full border-[#E2EEDB] hover:bg-[#F4F9F1] rounded-xl"
@@ -448,7 +435,6 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                 </Button>
               </div>
             )}
-
             <DrawerFooter className="px-0 pt-6 border-t border-[#E2EEDB] mt-6 flex flex-row gap-3">
               <Button
                 onClick={handleSubmit}

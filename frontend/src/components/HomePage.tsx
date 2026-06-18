@@ -9,18 +9,13 @@ const HomePage = () => {
       <BrowserRouter>
         <Navbar />
       </BrowserRouter>
-
-      {/* SUBTLE BACKGROUND TEXTURE */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
-
       <main className="relative z-10 w-full pt-32 pb-24">
-        {/* HERO SECTION */}
         <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">
           <div className="max-w-4xl mx-auto z-10">
             <p className="text-sm md:text-base font-bold tracking-widest uppercase text-[#82B85A] mb-6">
               Timing is Everything
             </p>
-
             <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.15] md:leading-[1.1]">
               A bowl of pasta at noon is{' '}
               <span className="text-[#82B85A] relative inline-block">
@@ -55,13 +50,11 @@ const HomePage = () => {
                 </svg>
               </span>
             </h1>
-
             <p className="text-lg md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
               Stop counting what you eat. Start feeling <strong>when</strong>{' '}
               you eat. Kalora is the first metabolic compass that harmonizes
               your nutrition with your circadian rhythm.
             </p>
-
             <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20 w-full max-w-md mx-auto sm:max-w-none">
               <a
                 href="/register"
@@ -69,7 +62,6 @@ const HomePage = () => {
               >
                 Sync Your Rhythm
               </a>
-
               <a
                 href="#features"
                 className="bg-white border-2 border-[#E2EEDB] text-[#173A27] px-10 py-4 rounded-full text-lg font-bold hover:border-[#82B85A] hover:bg-[#F4F9F1] hover:scale-105 transition-all duration-300 w-full sm:w-auto block text-center"
@@ -78,25 +70,14 @@ const HomePage = () => {
               </a>
             </div>
           </div>
-
-          {/* Illustrative Element: The Metabolic Clock */}
           <div className="relative w-full max-w-3xl mx-auto mt-12 flex justify-center items-center px-4">
-            {/* Background Glow */}
             <div className="absolute w-72 h-72 md:w-96 md:h-96 bg-[#82B85A]/10 rounded-full blur-3xl z-0"></div>
-
-            <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-[450px] md:h-[450px] z-10 flex items-center justify-center group">
-              {/* Outer Day/Night Ring */}
+            <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-112.5 md:h-112.5 z-10 flex items-center justify-center group">
               <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#82B85A]/50 animate-[spin_120s_linear_infinite]"></div>
-
-              {/* Middle Tracking Rings */}
               <div className="absolute inset-6 sm:inset-8 md:inset-12 rounded-full border-[3px] border-[#E2EEDB] shadow-inner"></div>
-
               <div className="absolute inset-6 sm:inset-8 md:inset-12 rounded-full border-[3px] border-transparent border-t-[#82B85A] border-r-[#82B85A] rotate-45 transition-transform duration-1000 group-hover:rotate-90"></div>
-
-              <div className="absolute inset-12 sm:inset-16 md:inset-24 rounded-full border-[2px] border-[#173A27]/20"></div>
-
-              {/* Center Pit (The Core) */}
-              <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-gradient-to-br from-[#9C6644] to-[#6B4226] rounded-full shadow-[inset_0_-10px_20px_rgba(0,0,0,0.3),_0_15px_35px_rgba(107,66,38,0.4)] flex items-center justify-center transition-transform duration-500 group-hover:scale-105 cursor-pointer">
+              <div className="absolute inset-12 sm:inset-16 md:inset-24 rounded-full border-2 border-[#173A27]/20"></div>
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-linear-to-br from-[#9C6644] to-[#6B4226] rounded-full shadow-[inset_0_-10px_20px_rgba(0,0,0,0.3),0_15px_35px_rgba(107,66,38,0.4)] flex items-center justify-center transition-transform duration-500 group-hover:scale-105 cursor-pointer">
                 <div className="text-white text-center">
                   <span className="block text-xl sm:text-2xl font-bold tracking-tight">
                     Now
@@ -106,26 +87,20 @@ const HomePage = () => {
                   </span>
                 </div>
               </div>
-
-              {/* Time Indicators */}
               <div className="absolute top-0 -translate-y-1/2 bg-white px-4 py-1 rounded-full text-xs sm:text-sm font-bold text-[#82B85A] shadow-md border border-[#E2EEDB] whitespace-nowrap">
                 12:00 PM • Fuel
               </div>
-
               <div className="absolute bottom-0 translate-y-1/2 bg-[#173A27] px-4 py-1 rounded-full text-xs sm:text-sm font-bold text-white shadow-md whitespace-nowrap">
                 12:00 AM • Debt
               </div>
             </div>
           </div>
         </section>
-
-        {/* FEATURES SECTION */}
         <section
           id="features"
           className="py-20 md:py-24 relative z-10 max-w-7xl mx-auto px-6 sm:px-8"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Card 1 */}
             <div className="bg-white p-8 md:p-10 rounded-[2rem] border border-[#E2EEDB] hover:border-[#82B85A] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
               <div className="w-14 h-14 rounded-2xl bg-[#F4F9F1] flex items-center justify-center mb-8 group-hover:bg-[#82B85A] transition-colors duration-300">
                 <svg
@@ -143,22 +118,17 @@ const HomePage = () => {
                   />
                 </svg>
               </div>
-
               <h3 className="text-xl md:text-2xl font-extrabold mb-4 text-[#173A27]">
                 Circadian Mapping
               </h3>
-
               <p className="text-base md:text-lg text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors">
                 Stop logging blindly. Kalora creates a beautiful timeline
                 visualizing your eating window, showing you the exact moment
                 your metabolism peaks.
               </p>
             </div>
-
-            {/* Card 2 */}
             <div className="bg-[#173A27] p-8 md:p-10 rounded-[2rem] shadow-2xl hover:-translate-y-2 transition-transform duration-300 group relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-[#204E35] rounded-full -mr-10 -mt-10 blur-2xl z-0"></div>
-
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-2xl bg-[#204E35] flex items-center justify-center mb-8">
                   <svg
@@ -176,11 +146,9 @@ const HomePage = () => {
                     />
                   </svg>
                 </div>
-
                 <h3 className="text-xl md:text-2xl font-extrabold mb-4 text-white">
                   Metabolic Momentum
                 </h3>
-
                 <p className="text-base md:text-lg text-gray-300 leading-relaxed">
                   Fuel at the right time? Watch your momentum score grow. An
                   off-hour snack? Kalora gently recalibrates your next window to
@@ -188,8 +156,6 @@ const HomePage = () => {
                 </p>
               </div>
             </div>
-
-            {/* Card 3 */}
             <div className="bg-white p-8 md:p-10 rounded-[2rem] border border-[#E2EEDB] hover:border-[#82B85A] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
               <div className="w-14 h-14 rounded-2xl bg-[#F4F9F1] flex items-center justify-center mb-8 group-hover:bg-[#82B85A] transition-colors duration-300">
                 <svg
@@ -207,11 +173,9 @@ const HomePage = () => {
                   />
                 </svg>
               </div>
-
               <h3 className="text-xl md:text-2xl font-extrabold mb-4 text-[#173A27]">
                 Visual Harmony
               </h3>
-
               <p className="text-base md:text-lg text-gray-600 leading-relaxed group-hover:text-gray-800 transition-colors">
                 String together days of perfect timing and watch your calendar
                 bloom with color. Build a living tapestry of great decisions.
@@ -219,8 +183,6 @@ const HomePage = () => {
             </div>
           </div>
         </section>
-
-        {/* BENTO BOX FEATURES SECTION */}
         <section
           id="bento-details"
           className="max-w-7xl mx-auto px-6 sm:px-8 mt-12 lg:mt-20"
@@ -235,9 +197,8 @@ const HomePage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[310px]">
-            {/* Box 1: The Timeline (Spans 2 columns on desktop) */}
-            <div className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#E2EEDB] shadow-sm hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group min-h-[280px] md:min-h-0 flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4F9F1] rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+            <div className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#E2EEDB] shadow-sm hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group min-h-70 md:min-h-0 flex flex-col justify-between">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4F9F1] rounded-bl-full z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
               <div className="relative z-10 h-full flex flex-col justify-between items-start w-full">
                 <div>
                   <h3 className="text-xl md:text-2xl font-bold mb-2">
@@ -248,7 +209,6 @@ const HomePage = () => {
                     plot your meals against your circadian rhythm curve.
                   </p>
                 </div>
-                {/* Abstract UI representation */}
                 <div className="w-full h-24 mt-6 bg-gray-50 rounded-xl border border-gray-100 flex items-end px-4 pb-4 space-x-2">
                   <div className="w-1/6 bg-[#E2EEDB] h-1/3 rounded-t-md"></div>
                   <div className="w-1/6 bg-[#82B85A] h-full rounded-t-md relative">
@@ -261,9 +221,7 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-
-            {/* Box 2: Bio-Feedback */}
-            <div className="bg-[#173A27] text-white rounded-3xl p-6 md:p-8 shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group min-h-[250px] md:min-h-0 flex flex-col justify-between">
+            <div className="bg-[#173A27] text-white rounded-3xl p-6 md:p-8 shadow-md hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group min-h-62.5 md:min-h-0 flex flex-col justify-between">
               <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#204E35] rounded-full blur-2xl group-hover:bg-[#82B85A]/40 transition-colors duration-500"></div>
               <div className="relative z-10 flex flex-col h-full justify-between">
                 <div>
@@ -280,9 +238,7 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
-
-            {/* Box 3: Minimal Input */}
-            <div className="bg-[#F4F9F1] rounded-3xl p-6 md:p-8 border border-[#C6D896]/50 hover:border-[#82B85A] transition-colors duration-300 flex flex-col justify-center items-center text-center group min-h-[250px] md:min-h-0">
+            <div className="bg-[#F4F9F1] rounded-3xl p-6 md:p-8 border border-[#C6D896]/50 hover:border-[#82B85A] transition-colors duration-300 flex flex-col justify-center items-center text-center group min-h-62.5 md:min-h-0">
               <div className="w-14 h-14 bg-white rounded-full shadow-sm flex items-center justify-center mb-4 group-hover:-translate-y-2 transition-transform duration-300">
                 <svg
                   className="w-6 h-6 text-[#82B85A]"
@@ -304,9 +260,7 @@ const HomePage = () => {
                 biological impact.
               </p>
             </div>
-
-            {/* Box 4: The Debt Tracker (Spans 2 columns on desktop) */}
-            <div className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#E2EEDB] shadow-sm flex flex-col justify-center relative overflow-hidden min-h-[280px] md:min-h-0">
+            <div className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#E2EEDB] shadow-sm flex flex-col justify-center relative overflow-hidden min-h-70 md:min-h-0">
               <div className="flex flex-col sm:flex-row items-center justify-between z-10 relative gap-6">
                 <div className="max-w-md text-center sm:text-left">
                   <h3 className="text-xl md:text-2xl font-bold mb-2">
@@ -354,8 +308,6 @@ const HomePage = () => {
           </div>
         </section>
       </main>
-
-      {/* FOOTER */}
       <footer className="bg-white border-t border-[#E2EEDB] py-12 relative z-10">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
           <div>

@@ -174,14 +174,12 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
           </p>
         </div>
       </DialogTrigger>
-
       <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto bg-[#FAFCF8] text-[#173A27] rounded-[2.5rem] border border-[#E2EEDB] p-6 shadow-xl">
         <DialogHeader className="pb-2">
           <DialogTitle className="text-2xl font-extrabold tracking-tight text-[#173A27]">
             Metabolic Sync Audit
           </DialogTitle>
         </DialogHeader>
-
         {!selected ? (
           <Command
             shouldFilter={false}
@@ -242,7 +240,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 ✕
               </Button>
             </div>
-
             <div className="space-y-1.5">
               <Label
                 htmlFor="qty"
@@ -261,7 +258,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 className="bg-white border-[#E2EEDB] rounded-xl h-11 focus-visible:ring-[#82B85A]/20"
               />
             </div>
-
             <div className="space-y-1.5">
               <Label className="text-xs font-bold text-[#173A27] px-1">
                 Target Mapping Interval
@@ -284,7 +280,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 ))}
               </div>
             </div>
-
             {nutrients && (
               <div className="grid grid-cols-3 gap-2 text-center p-3 bg-white border border-[#E2EEDB] rounded-2xl">
                 {[
@@ -309,7 +304,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 ))}
               </div>
             )}
-
             {hasVerdict && (
               <div className="rounded-2xl border border-[#E2EEDB] bg-white p-4 space-y-2">
                 <p className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-1">
@@ -341,7 +335,6 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 ))}
               </div>
             )}
-
             <div className="flex gap-3 border-t border-[#E2EEDB] pt-4 mt-2">
               <Button
                 className={`flex-1 h-12 rounded-full font-bold text-sm transition-all duration-300 ${

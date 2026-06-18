@@ -10,7 +10,6 @@ const Navbar = () => {
     <header className="fixed top-4 left-0 right-0 z-50 px-4 md:px-6 pointer-events-none">
       <div className="max-w-5xl mx-auto pointer-events-auto">
         <div className="bg-white/80 backdrop-blur-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl h-16 px-6 flex justify-between items-center transition-all duration-500 hover:shadow-[0_8px_30px_rgb(130,184,90,0.08)]">
-          {/* BRANDING */}
           <Link
             to="/"
             className="flex items-center space-x-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-lg p-1"
@@ -31,8 +30,6 @@ const Navbar = () => {
               className="h-4 w-auto hidden sm:block transform group-hover:translate-x-0.5 transition-transform duration-500"
             />
           </Link>
-
-          {/* DESKTOP NAVIGATION */}
           <nav
             className="hidden md:flex items-center space-x-8"
             aria-label="Main Navigation"
@@ -42,18 +39,16 @@ const Navbar = () => {
               className="text-[#173A27] font-bold text-sm tracking-wide relative py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md px-1"
             >
               <span>The Logic</span>
-              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
             </a>
             <a
               href="#features"
               className="text-[#173A27] font-bold text-sm tracking-wide relative py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md px-1"
             >
               <span>Features</span>
-              <span className="absolute bottom-0 left-0 w-0 h-[2px] bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
             </a>
           </nav>
-
-          {/* DESKTOP ACTIONS */}
           <div className="hidden md:flex items-center space-x-4">
             <Link
               to="/login"
@@ -71,8 +66,6 @@ const Navbar = () => {
               </span>
             </Link>
           </div>
-
-          {/* MOBILE MENU TOGGLE */}
           <button
             className="md:hidden p-2 text-[#173A27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}

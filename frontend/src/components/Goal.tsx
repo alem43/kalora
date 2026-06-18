@@ -36,7 +36,7 @@ const Goal = ({ refreshKey }: GoalProps) => {
     (sum: number, food: any) => sum + Number(food.calories || 0),
     0,
   )
-  const goalCalories = totalCalories > 0 ? totalCalories + 500 : 2000 // Sensible fallback anchor
+  const goalCalories = totalCalories > 0 ? totalCalories + 500 : 2000
   const percentage = Math.min(
     100,
     Math.round((totalCalories / goalCalories) * 100),
@@ -74,8 +74,7 @@ const Goal = ({ refreshKey }: GoalProps) => {
 
   return (
     <div className="bg-white rounded-[2.5rem] border border-[#E2EEDB] p-6 sm:p-8 shadow-sm relative overflow-hidden">
-      <div className="absolute top-0 right-0 w-80 h-full bg-[#F4F9F1] rounded-l-full -z-0 opacity-40 pointer-events-none"></div>
-
+      <div className="absolute top-0 right-0 w-80 h-full bg-[#F4F9F1] rounded-l-full z-0 opacity-40 pointer-events-none"></div>
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-2 flex-1">
           <div className="flex items-center gap-2">
@@ -91,7 +90,6 @@ const Goal = ({ refreshKey }: GoalProps) => {
             </span>
           </h2>
         </div>
-
         <div className="w-full lg:w-1/2 space-y-3">
           <div className="flex justify-between text-sm font-bold">
             <span className="text-[#173A27]">
@@ -101,12 +99,10 @@ const Goal = ({ refreshKey }: GoalProps) => {
               {goalCalories - totalCalories} kcal remaining
             </span>
           </div>
-
-          {/* Custom Pill Progress Gauge */}
           <div className="w-full h-5 bg-[#F4F9F1] rounded-full p-1 border border-[#E2EEDB] overflow-hidden">
             <div
               style={{ width: `${Math.max(5, percentage)}%` }}
-              className="h-full bg-gradient-to-r from-[#82B85A] to-[#6da447] rounded-full transition-all duration-500 ease-out shadow-sm"
+              className="h-full bg-linear-to-r from-[#82B85A] to-[#6da447] rounded-full transition-all duration-500 ease-out shadow-sm"
             ></div>
           </div>
         </div>

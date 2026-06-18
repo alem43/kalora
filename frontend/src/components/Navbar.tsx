@@ -61,9 +61,7 @@ const Navbar = () => {
               className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#173A27]"
             >
               <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#82B85A] rounded-full group-hover:w-56 group-hover:h-56"></span>
-              <span className="relative text-sm tracking-wide">
-                Sync Your Rhythm
-              </span>
+              <span className="relative text-sm tracking-wide">Sign Up</span>
             </Link>
           </div>
           <button

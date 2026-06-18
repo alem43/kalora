@@ -11,7 +11,6 @@ export const Route = createFileRoute('/dashboard')({
 })
 
 function RouteComponent() {
-  // Shared synchronization state to refresh components when a log is created
   const [refreshKey, setRefreshKey] = useState(0)
 
   const handleRefresh = () => {
@@ -20,20 +19,14 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased pb-24 relative overflow-hidden">
-      {/* Background Texture */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
-
-      {/* Radiant Glows */}
-      <div className="absolute top-0 right-0 w-[600px] h-[500px] bg-[#82B85A]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
-      <div className="absolute bottom-1/4 left-0 w-[500px] h-[500px] bg-[#805033]/3 rounded-full blur-[120px] pointer-events-none z-0"></div>
-
+      <div className="absolute top-0 right-0 w-150 h-125 bg-[#82B85A]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-1/4 left-0 w-125 h-125 bg-[#805033]/3 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="relative z-10">
         <BrowserRouter>
           <Navbar />
         </BrowserRouter>
-
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32">
-          {/* Header Row */}
           <div className="mb-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
               <p className="text-sm font-bold tracking-widest uppercase text-[#82B85A] mb-1">
@@ -52,14 +45,10 @@ function RouteComponent() {
               })}
             </div>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-            {/* Primary Calorie Goal Panel */}
             <div className="lg:col-span-3">
               <Goal key={`goal-${refreshKey}`} refreshKey={refreshKey} />
             </div>
-
-            {/* Main Interactive Tools Stack */}
             <div className="lg:col-span-1 space-y-6">
               <div className="bg-white rounded-[2rem] border border-[#E2EEDB] p-6 shadow-sm relative overflow-hidden group">
                 <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#F4F9F1] rounded-full blur-xl opacity-60 group-hover:scale-120 transition-transform duration-500"></div>
@@ -75,8 +64,6 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
-
-            {/* Timeline Logs Container */}
             <div className="lg:col-span-2">
               <FoodLog
                 key={`log-${refreshKey}`}

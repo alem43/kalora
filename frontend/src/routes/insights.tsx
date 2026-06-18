@@ -73,7 +73,6 @@ const PATTERN_META: Record<
 function PatternCard({ pattern }: { pattern: Pattern }) {
   const meta = PATTERN_META[pattern.id]
 
-  // Default icon if not mapped
   const DefaultIcon = (
     <svg
       className="w-6 h-6"
@@ -101,11 +100,9 @@ function PatternCard({ pattern }: { pattern: Pattern }) {
           : 'border-[#E2EEDB] bg-white hover:border-[#82B85A] hover:shadow-[0_8px_30px_rgba(130,184,90,0.08)]'
       }`}
     >
-      {/* Subtle background glow based on state */}
       <div
         className={`absolute -right-10 -top-10 w-32 h-32 rounded-full blur-2xl opacity-20 transition-colors duration-500 ${isDetected ? 'bg-[#805033]' : 'bg-[#82B85A]'}`}
       ></div>
-
       <div className="relative z-10 flex flex-col sm:flex-row items-start gap-5">
         <div
           className={`shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-colors duration-300 ${
@@ -116,7 +113,6 @@ function PatternCard({ pattern }: { pattern: Pattern }) {
         >
           {icon}
         </div>
-
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex items-center justify-between">
             <h3
@@ -208,17 +204,12 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased pb-24 relative overflow-hidden">
-      {/* SUBTLE BACKGROUND TEXTURE */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
-
-      {/* Decorative Blur */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#82B85A]/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
-
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-100 bg-[#82B85A]/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
       <div className="relative z-10">
         <BrowserRouter>
           <Navbar />
         </BrowserRouter>
-
         <main className="max-w-3xl mx-auto px-6 sm:px-8 pt-32">
           <div className="mb-12 text-center sm:text-left">
             <p className="text-sm font-bold tracking-widest uppercase text-[#82B85A] mb-2">
@@ -231,7 +222,6 @@ function RouteComponent() {
               Decoding the rhythm of your last 30 days.
             </p>
           </div>
-
           <div className="space-y-6">
             {loading ? (
               <>
@@ -265,7 +255,7 @@ function RouteComponent() {
               </div>
             ) : !hasEnoughData ? (
               <div className="bg-white rounded-[2rem] border border-[#E2EEDB] p-10 text-center shadow-sm relative overflow-hidden group">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4F9F1] rounded-bl-full -z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4F9F1] rounded-bl-full z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-[#F4F9F1] rounded-full flex items-center justify-center mb-6 border-8 border-white shadow-sm">
                     <svg
@@ -308,7 +298,6 @@ function RouteComponent() {
                     {data!.dataRange.totalLogs} meals logged
                   </div>
                 </div>
-
                 <div className="space-y-6">
                   {data!.patterns.map((pattern) => (
                     <PatternCard key={pattern.id} pattern={pattern} />

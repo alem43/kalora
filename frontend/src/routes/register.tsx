@@ -82,7 +82,7 @@ function RouteComponent() {
       await api.auth.register({
         userName: completeData.userName!,
         email: completeData.email!,
-        password: completeData.password, // Handled seamlessly if OAuth user has no password
+        password: completeData.password,
         gender: completeData.gender!,
         age: completeData.age!,
         height: completeData.height!,
@@ -112,7 +112,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#82B85A] to-blue-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#82B85A] to-blue-50 px-4 py-8">
       <div className="w-full max-w-2xl">
         {/* Progress Tracker */}
         <div className="mb-8">
@@ -146,16 +146,12 @@ function RouteComponent() {
             </p>
           </div>
         </div>
-
-        {/* Card Content */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           {serverError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{serverError}</p>
             </div>
           )}
-
-          {/* STEP 1: Account Details */}
           {currentStep === 1 && (
             <div>
               <div className="text-center mb-8">
@@ -189,7 +185,6 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="email"
@@ -210,7 +205,6 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="password"
@@ -231,7 +225,6 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <label
                     htmlFor="confirmPassword"
@@ -252,7 +245,6 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
-
                 <button
                   type="submit"
                   className="w-full bg-[#82B85A] hover:bg-[#73a54d] text-white font-semibold py-3 rounded-lg transition"
@@ -260,7 +252,6 @@ function RouteComponent() {
                   Continue
                 </button>
               </form>
-
               <div className="mt-6 text-center space-y-4">
                 <p className="text-sm text-gray-600">
                   Already have an account?{' '}
@@ -300,8 +291,6 @@ function RouteComponent() {
               </div>
             </div>
           )}
-
-          {/* STEP 2: Personal Information */}
           {currentStep === 2 && (
             <div>
               <div className="text-center mb-8">
@@ -357,7 +346,6 @@ function RouteComponent() {
                     )}
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label
@@ -400,7 +388,6 @@ function RouteComponent() {
                     )}
                   </div>
                 </div>
-
                 <div>
                   <label
                     htmlFor="goalWeight"
@@ -419,7 +406,6 @@ function RouteComponent() {
                     placeholder="65"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Activity Level
@@ -439,7 +425,6 @@ function RouteComponent() {
                     </option>
                   </select>
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1.5">
                     Your Goal
@@ -454,7 +439,6 @@ function RouteComponent() {
                     <option value="build_muscle">Build Muscle</option>
                   </select>
                 </div>
-
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -476,8 +460,6 @@ function RouteComponent() {
               </form>
             </div>
           )}
-
-          {/* STEP 3: Success Screen */}
           {currentStep === 3 && (
             <div className="text-center py-8">
               <div className="mb-6">

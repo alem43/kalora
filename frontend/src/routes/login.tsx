@@ -5,7 +5,7 @@ import * as z from 'zod'
 import { useState } from 'react'
 import { api, ApiError } from '#/lib/api'
 import { GoogleLogin } from '@react-oauth/google'
-import logoImage from '../images/logo_image.png' // Assuming same path structure
+import logoImage from '../images/logo_image.png'
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
@@ -53,14 +53,10 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] flex items-center justify-center p-4 relative overflow-hidden antialiased">
-      {/* SUBTLE BACKGROUND TEXTURE */}
       <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
-
-      {/* Background Glows */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#82B85A]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 z-0 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#805033]/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 z-0 pointer-events-none"></div>
-
-      <div className="w-full max-w-[440px] relative z-10">
+      <div className="absolute top-0 right-0 w-125 h-125 bg-[#82B85A]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 z-0 pointer-events-none"></div>
+      <div className="absolute bottom-0 left-0 w-100 h-100 bg-[#805033]/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 z-0 pointer-events-none"></div>
+      <div className="w-full max-w-110 relative z-10">
         <div className="mb-8 flex justify-center">
           <Link to="/" className="group flex items-center space-x-3">
             <div className="w-12 h-12 bg-white rounded-2xl shadow-sm border border-[#E2EEDB] flex items-center justify-center group-hover:border-[#82B85A] transition-colors duration-300">
@@ -71,11 +67,8 @@ function RouteComponent() {
             </span>
           </Link>
         </div>
-
         <div className="bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(23,58,39,0.1)] border border-[#E2EEDB] p-8 sm:p-10 relative overflow-hidden">
-          {/* Internal corner decoration */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4F9F1] rounded-bl-full -z-0 opacity-50"></div>
-
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F4F9F1] rounded-bl-full z-0 opacity-50"></div>
           <div className="relative z-10">
             <div className="text-center mb-10">
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mb-3">
@@ -85,7 +78,6 @@ function RouteComponent() {
                 Welcome back to your metabolic compass.
               </p>
             </div>
-
             {serverError && (
               <div className="mb-8 p-4 bg-[#805033]/10 border border-[#805033]/20 rounded-2xl flex items-center gap-3">
                 <svg
@@ -106,7 +98,6 @@ function RouteComponent() {
                 </p>
               </div>
             )}
-
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-5">
                 <div>
@@ -143,7 +134,6 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
-
                 <div>
                   <div className="flex items-center justify-between mb-2 px-1">
                     <label
@@ -186,7 +176,6 @@ function RouteComponent() {
                   )}
                 </div>
               </div>
-
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -221,7 +210,6 @@ function RouteComponent() {
                 )}
               </button>
             </form>
-
             <div className="mt-8 relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-[#E2EEDB]"></div>
@@ -230,9 +218,7 @@ function RouteComponent() {
                 Or connect with
               </div>
             </div>
-
             <div className="mt-8 flex justify-center w-full overflow-hidden rounded-full border border-[#E2EEDB] hover:border-[#82B85A] hover:bg-[#F4F9F1] transition-all duration-300">
-              {/* Note: GoogleLogin has its own default styling, we wrap it to contain its borders within our aesthetic */}
               <div className="scale-[1.02] transform w-full flex justify-center">
                 <GoogleLogin
                   onSuccess={async (credentialResponse) => {
@@ -258,9 +244,8 @@ function RouteComponent() {
             </div>
           </div>
         </div>
-
         <p className="mt-8 text-center text-sm font-medium text-gray-500">
-          New to the rhythm?{' '}
+          New to the rhythm?
           <Link
             to="/register"
             className="text-[#82B85A] font-bold hover:text-[#173A27] transition-colors underline decoration-[#82B85A]/30 underline-offset-4"

@@ -112,9 +112,8 @@ function RouteComponent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#82B85A] to-blue-50 px-4 py-8">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-2xl">
-        {/* Progress Tracker */}
         <div className="mb-8">
           <div className="flex items-center justify-center">
             {[1, 2, 3].map((step) => (

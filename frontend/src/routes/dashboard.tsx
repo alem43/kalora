@@ -4,7 +4,6 @@ import Navbar from '#/components/Navbar'
 import ShouldIEatThis from '#/components/ShouldIEatThis'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
-import { BrowserRouter } from 'react-router-dom'
 
 export const Route = createFileRoute('/dashboard')({
   component: RouteComponent,
@@ -31,9 +30,7 @@ function RouteComponent() {
       <div className="absolute top-[40%] -left-40 w-125 h-125 bg-[#805033]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute -bottom-40 right-[20%] w-100 h-100 bg-[#C6D896]/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
       <div className="relative z-10 flex flex-col min-h-screen">
-        <BrowserRouter>
-          <Navbar />
-        </BrowserRouter>
+        <Navbar />
         <main className="grow w-full max-w-350 mx-auto px-6 sm:px-8 lg:px-12 pt-32 lg:pt-40">
           <header className="mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-20">
             <div className="space-y-4">

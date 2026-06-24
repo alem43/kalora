@@ -1,14 +1,11 @@
 import React from 'react'
 import Navbar from './Navbar'
-import { BrowserRouter } from 'react-router-dom'
 import logoImage from '../images/logo_image.png'
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] overflow-x-hidden antialiased">
-      <BrowserRouter>
-        <Navbar />
-      </BrowserRouter>
+      <Navbar />
       <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <main className="relative z-10 w-full pt-32 pb-24">
         <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">

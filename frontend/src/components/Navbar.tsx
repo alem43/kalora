@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+﻿import React, { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
 
@@ -34,20 +34,10 @@ const Navbar = () => {
             className="hidden md:flex items-center space-x-8"
             aria-label="Main Navigation"
           >
-            <a
-              href="#approach"
-              className="text-[#173A27] font-bold text-sm tracking-wide relative py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md px-1"
-            >
-              <span>The Logic</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
-            </a>
-            <a
-              href="#features"
-              className="text-[#173A27] font-bold text-sm tracking-wide relative py-2 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md px-1"
-            >
-              <span>Features</span>
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
-            </a>
+            <span>The Logic</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
+            <span>Features</span>
+            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
           </nav>
           <div className="hidden md:flex items-center space-x-4">
             <Link

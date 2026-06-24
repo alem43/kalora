@@ -6,6 +6,7 @@ import {users, sessions} from "../db/schema";
 import {eq} from "drizzle-orm";
 import {createSession, hashPassword} from "../utils/auth-helpers.js";
 import {registerSchema, loginSchema} from "../utils/auth-validation.js";
+import {authMiddleware} from "../middleware/requireAuth";
 import {AppError} from "../middleware/errorHandler.js";
 import {OAuth2Client} from "google-auth-library";
 
@@ -95,6 +96,27 @@ authRoute.post("/logout", async (c) => {
 
   deleteCookie(c, "session");
   return c.json({message: "Logged out"});
+});
+
+authRoute.get("/me", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+
+  const user = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      userName: users.userName,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .get();
+
+  if (!user) {
+    throw new AppError(404, "User not found", "USER_NOT_FOUND");
+  }
+
+  return c.json(user);
 });
 
 authRoute.post("/google", async (c) => {

@@ -85,6 +85,7 @@ export const api = {
       request('/auth/logout', {
         method: 'POST',
       }),
+    me: () => request('/auth/me'),
     googleLogin: (data: { credential: string }) =>
       request('/auth/google', {
         method: 'POST',

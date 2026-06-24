@@ -3,11 +3,22 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
 import { useState } from 'react'
+import { redirect } from '@tanstack/react-router'
 import { api, ApiError } from '#/lib/api'
 import { GoogleLogin } from '@react-oauth/google'
 import logoImage from '../images/logo_image.png'
 
 export const Route = createFileRoute('/login')({
+  beforeLoad: async () => {
+    try {
+      await api.auth.me()
+
+      throw redirect({
+        to: '/dashboard',
+      })
+    } catch {}
+  },
+
   component: RouteComponent,
 })
 
@@ -37,7 +48,7 @@ function RouteComponent() {
         email: data.email,
         password: data.password,
       })
-      navigate({ to: '/' })
+      navigate({ to: '/dashboard' })
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.status === 401) {

@@ -1,10 +1,33 @@
 ﻿import React, { useState } from 'react'
-import { Link } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
+import { api } from '#/lib/api'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const navigate = useNavigate()
+
+  const { data: user } = useQuery({
+    queryKey: ['auth'],
+    queryFn: api.auth.me,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const handleLogout = async () => {
+    await api.auth.logout()
+
+    queryClient.removeQueries({
+      queryKey: ['auth'],
+    })
+
+    navigate({
+      to: '/login',
+    })
+  }
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4 md:px-6 pointer-events-none">
@@ -24,38 +47,58 @@ const Navbar = () => {
                 className="w-full h-full object-contain relative transform group-hover:rotate-12 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
               />
             </div>
+
             <img
               src={logoText}
               alt="Kalora"
               className="h-4 w-auto hidden sm:block transform group-hover:translate-x-0.5 transition-transform duration-500"
             />
           </Link>
-          <nav
-            className="hidden md:flex items-center space-x-8"
-            aria-label="Main Navigation"
-          >
-            <span>The Logic</span>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
-            <span>Features</span>
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#82B85A] group-hover:w-full transition-all duration-300 ease-out"></span>
-          </nav>
+
           <div className="hidden md:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-[#173A27] font-bold text-sm tracking-wide hover:text-[#82B85A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md px-2 py-1"
-            >
-              Log In
-            </Link>
-            <Link
-              to="/register"
-              className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#173A27]"
-            >
-              <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#82B85A] rounded-full group-hover:w-56 group-hover:h-56"></span>
-              <span className="relative text-sm tracking-wide">Sign Up</span>
-            </Link>
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="text-[#173A27] font-bold text-sm tracking-wide hover:text-[#82B85A] transition-colors"
+                >
+                  Dashboard
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group"
+                >
+                  <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#82B85A] rounded-full group-hover:w-56 group-hover:h-56"></span>
+
+                  <span className="relative text-sm tracking-wide">Logout</span>
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="text-[#173A27] font-bold text-sm tracking-wide hover:text-[#82B85A] transition-colors"
+                >
+                  Log In
+                </Link>
+
+                <Link
+                  to="/register"
+                  className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group"
+                >
+                  <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#82B85A] rounded-full group-hover:w-56 group-hover:h-56"></span>
+
+                  <span className="relative text-sm tracking-wide">
+                    Sign Up
+                  </span>
+                </Link>
+              </>
+            )}
           </div>
+
           <button
-            className="md:hidden p-2 text-[#173A27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-md"
+            className="md:hidden p-2 text-[#173A27]"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-label="Toggle menu"

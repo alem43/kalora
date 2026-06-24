@@ -2,7 +2,8 @@ import FoodLog from '#/components/FoodLog'
 import Goal from '#/components/Goal'
 import Navbar from '#/components/Navbar'
 import ShouldIEatThis from '#/components/ShouldIEatThis'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { api } from '#/lib/api'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/dashboard')({

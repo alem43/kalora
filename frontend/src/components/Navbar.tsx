@@ -5,6 +5,8 @@ import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
 import { api } from '#/lib/api'
 import { useQueryClient } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '#/lib/query-client'
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -67,7 +69,7 @@ const Navbar = () => {
 
                 <button
                   onClick={handleLogout}
-                  className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group"
+                  className="relative inline-flex items-center justify-center px-5 py-2.5 overflow-hidden font-bold text-white bg-[#173A27] rounded-xl group cursor-pointer"
                 >
                   <span className="absolute w-0 h-0 transition-all duration-500 ease-out bg-[#82B85A] rounded-full group-hover:w-56 group-hover:h-56"></span>
 

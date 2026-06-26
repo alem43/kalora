@@ -43,6 +43,13 @@
       "when": 1781881540799,
       "tag": "0005_swift_giant_man",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1782477982161,
+      "tag": "0006_orange_blade",
+      "breakpoints": true
     }
   ]
 }

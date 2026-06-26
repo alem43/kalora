@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/inter';
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
@@ -152,4 +153,8 @@ body {
 
 .box-shadow {
   box-shadow: 0px 0px 8px 0px #00000026;
+}
+
+.font-fraunces {
+  font-family: 'Fraunces', serif;
 }

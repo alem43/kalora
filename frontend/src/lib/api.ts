@@ -91,6 +91,11 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    completeOnboarding: (data: unknown) =>
+      request('/auth/onboarding', {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+      }),
   },
   food: {
     list: () => request('/food'),

@@ -56,6 +56,7 @@ function RouteComponent() {
   const [currentStep, setCurrentStep] = useState(1)
   const [serverError, setServerError] = useState<string>('')
   const [formData, setFormData] = useState<CombinedFormData>({})
+  const [isGoogleSignup, setIsGoogleSignup] = useState(false)
 
   const step1Form = useForm<Step1Values>({
     resolver: zodResolver(step1Schema),
@@ -77,20 +78,24 @@ function RouteComponent() {
   const onStep2Submit = async (data: Step2Values) => {
     try {
       setServerError('')
-      const completeData = { ...formData, ...data }
 
-      await api.auth.register({
-        userName: completeData.userName!,
-        email: completeData.email!,
-        password: completeData.password,
-        gender: completeData.gender!,
-        age: completeData.age!,
-        height: completeData.height!,
-        weight: completeData.weight!,
-        goalWeight: completeData.goalWeight,
-        activityLevel: completeData.activityLevel!,
-        goal: completeData.goal!,
-      })
+      if (isGoogleSignup) {
+        await api.auth.completeOnboarding(data)
+      } else {
+        const completeData = { ...formData, ...data }
+        await api.auth.register({
+          userName: completeData.userName!,
+          email: completeData.email!,
+          password: completeData.password,
+          gender: completeData.gender!,
+          age: completeData.age!,
+          height: completeData.height!,
+          weight: completeData.weight!,
+          goalWeight: completeData.goalWeight,
+          activityLevel: completeData.activityLevel!,
+          goal: completeData.goal!,
+        })
+      }
 
       setCurrentStep(3)
     } catch (error) {
@@ -149,6 +154,14 @@ function RouteComponent() {
           {serverError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{serverError}</p>
+              {(serverError === 'This email is already registered' ||
+                serverError === 'This username is already taken') && (
+                <p className="text-sm text-red-600 mt-1">
+                  <Link to="/login" className="underline font-medium">
+                    Sign in instead
+                  </Link>
+                </p>
+              )}
             </div>
           )}
           {currentStep === 1 && (
@@ -269,8 +282,8 @@ function RouteComponent() {
                         const res = await api.auth.googleLogin({
                           credential: credentialResponse.credential,
                         })
-
                         if (res.needsOnboarding) {
+                          setIsGoogleSignup(true)
                           setFormData({
                             email: res.email,
                             userName: res.userName,

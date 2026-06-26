@@ -10,10 +10,10 @@ const HomePage = () => {
       <main className="relative z-10 w-full pt-32 pb-24">
         <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">
           <div className="max-w-4xl mx-auto z-10">
-            <p className="text-sm md:text-base font-bold tracking-widest uppercase text-[#82B85A] mb-6">
+            <p className="text-sm md:text-base font-bold tracking-widest uppercase text-[#82B85A] mb-6 font-fraunces">
               Timing is Everything
             </p>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.15] md:leading-[1.1]">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl xl:text-7xl font-extrabold tracking-tight mb-8 leading-[1.15] md:leading-[1.1] font-fraunces">
               A bowl of pasta at noon is{' '}
               <span className="text-[#82B85A] relative inline-block">
                 fuel.
@@ -48,7 +48,7 @@ const HomePage = () => {
               </span>
             </h1>
             <p className="text-lg md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Stop counting what you eat. Start feeling <strong>when</strong>{' '}
+              Stop counting what you eat. Start feeling <strong>when</strong>
               you eat. Kalora is the first metabolic compass that harmonizes
               your nutrition with your circadian rhythm.
             </p>

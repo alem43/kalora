@@ -6,7 +6,10 @@ export const registerSchema = z.object({
     .string()
     .min(3, "Username must be at least 3 characters")
     .max(20, "Username must be at most 20 characters")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores"),
+    .regex(
+      /^[a-zA-Z0-9_]+$/,
+      "Username can only contain letters, numbers, and underscores",
+    ),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")
@@ -18,7 +21,13 @@ export const registerSchema = z.object({
   height: z.number().int().min(100, "Height must be at least 100cm").max(250),
   weight: z.number().min(30, "Weight must be at least 30kg").max(300),
   goalWeight: z.number().min(30).max(300).optional(),
-  activityLevel: z.enum(["sedentary", "light", "moderate", "active", "very_active"]),
+  activityLevel: z.enum([
+    "sedentary",
+    "light",
+    "moderate",
+    "active",
+    "very_active",
+  ]),
   goal: z.enum(["lose_weight", "maintain", "gain_weight", "build_muscle"]),
 });
 
@@ -27,5 +36,22 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+export const onboardingSchema = z.object({
+  gender: z.enum(["male", "female", "other"]),
+  age: z.number().min(13).max(120),
+  height: z.number().min(100).max(250),
+  weight: z.number().min(30).max(300),
+  goalWeight: z.number().min(30).max(300).optional(),
+  activityLevel: z.enum([
+    "sedentary",
+    "light",
+    "moderate",
+    "active",
+    "very_active",
+  ]),
+  goal: z.enum(["lose_weight", "maintain", "gain_weight", "build_muscle"]),
+});
+
+export type OnboardingSchema = z.infer<typeof onboardingSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

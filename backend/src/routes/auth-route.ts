@@ -9,6 +9,7 @@ import {registerSchema, loginSchema} from "../utils/auth-validation.js";
 import {authMiddleware} from "../middleware/requireAuth";
 import {AppError} from "../middleware/errorHandler.js";
 import {OAuth2Client} from "google-auth-library";
+import {onboardingSchema} from "../utils/auth-validation.js";
 
 const authRoute = new Hono();
 
@@ -49,6 +50,7 @@ authRoute.post("/register", async (c) => {
     goalWeight: data.goalWeight || null,
     activityLevel: data.activityLevel,
     goal: data.goal,
+    onboardingCompleted: true,
     createdAt: Date.now(),
   };
 
@@ -163,6 +165,7 @@ authRoute.post("/google", async (c) => {
       goalWeight: null,
       activityLevel: "moderate",
       goal: "maintain",
+      onboardingCompleted: false,
       createdAt: Date.now(),
     };
 
@@ -176,8 +179,35 @@ authRoute.post("/google", async (c) => {
     id: user.id,
     email: user.email,
     userName: user.userName,
-    needsOnboarding: !user.passwordHash,
+    needsOnboarding: !user.onboardingCompleted,
   });
+});
+
+authRoute.patch("/onboarding", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+  const body = await c.req.json();
+  const data = onboardingSchema.parse(body);
+
+  const user = await db.select().from(users).where(eq(users.id, userId)).get();
+  if (!user) {
+    throw new AppError(404, "User not found", "USER_NOT_FOUND");
+  }
+
+  await db
+    .update(users)
+    .set({
+      gender: data.gender,
+      age: data.age,
+      height: data.height,
+      weight: data.weight,
+      goalWeight: data.goalWeight || null,
+      activityLevel: data.activityLevel,
+      goal: data.goal,
+      onboardingCompleted: true,
+    })
+    .where(eq(users.id, userId));
+
+  return c.json({id: user.id, email: user.email, userName: user.userName});
 });
 
 export default authRoute;

@@ -1,19 +1,19 @@
 import React from 'react'
 import Navbar from './Navbar'
 import logoImage from '../images/logo_image.png'
+import logoText from '../images/logo_text.png'
 
 const HomePage = () => {
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] overflow-x-hidden antialiased">
       <Navbar />
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
-      <main className="relative z-10 w-full pt-32 pb-24">
+      <main className="relative z-10 w-full">
         <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="max-w-4xl mx-auto z-10">
-            <p className="text-sm md:text-base font-bold tracking-widest uppercase text-[#82B85A] mb-6 font-fraunces">
-              Timing is Everything
+          <div className="max-w-4xl mx-auto z-10 mt-14 sm:mt-24">
+            <p className="text-sm font-black tracking-widest text-[#82B85A] mb-6 font-fraunces">
+              TIMING IS EVERYTHING
             </p>
-            <h1 className="text-4xl sm:text-5xl md:text-7xl xl:text-7xl font-extrabold tracking-tight mb-8 leading-[1.15] md:leading-[1.1] font-fraunces">
+            <h1 className="text-[2.625rem] sm:text-5xl md:text-7xl xl:text-7xl leading-none font-black mb-8 font-fraunces">
               A bowl of pasta at noon is{' '}
               <span className="text-[#82B85A] relative inline-block">
                 fuel.
@@ -47,27 +47,27 @@ const HomePage = () => {
                 </svg>
               </span>
             </h1>
-            <p className="text-lg md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
-              Stop counting what you eat. Start feeling <strong>when</strong>
+            <p className="text-base md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+              Stop counting what you eat. Start feeling <strong>when </strong>
               you eat. Kalora is the first metabolic compass that harmonizes
               your nutrition with your circadian rhythm.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20 w-full max-w-md mx-auto sm:max-w-none">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-20 w-full max-w-72 mx-auto sm:max-w-none">
               <a
                 href="/register"
-                className="bg-[#173A27] text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-[#204E35] hover:scale-105 hover:shadow-[0_8px_25px_rgba(23,58,39,0.3)] transition-all duration-300 w-full sm:w-auto block text-center"
+                className="bg-[#173A27] text-white px-10 py-4 rounded-full text-base font-bold hover:bg-[#204E35] hover:scale-105 hover:shadow-[0_8px_25px_rgba(23,58,39,0.3)] transition-all duration-300 w-full sm:w-auto block text-center"
               >
-                Sync Your Rhythm
+                Start your journey
               </a>
               <a
                 href="#features"
-                className="bg-white border-2 border-[#E2EEDB] text-[#173A27] px-10 py-4 rounded-full text-lg font-bold hover:border-[#82B85A] hover:bg-[#F4F9F1] hover:scale-105 transition-all duration-300 w-full sm:w-auto block text-center"
+                className="bg-white border-2 border-[#E2EEDB] text-[#173A27] px-10 py-4 rounded-full text-base font-bold hover:border-[#82B85A] hover:bg-[#F4F9F1] hover:scale-105 transition-all duration-300 w-full sm:w-auto block text-center"
               >
-                See How It Works
+                See how it works
               </a>
             </div>
           </div>
-          <div className="relative w-full max-w-3xl mx-auto mt-12 flex justify-center items-center px-4">
+          <div className="relative w-full max-w-3xl mx-auto sm:mt-12 flex justify-center items-center px-4">
             <div className="absolute w-72 h-72 md:w-96 md:h-96 bg-[#82B85A]/10 rounded-full blur-3xl z-0"></div>
             <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-112.5 md:h-112.5 z-10 flex items-center justify-center group">
               <div className="absolute inset-0 rounded-full border-[1.5px] border-dashed border-[#82B85A]/50 animate-[spin_120s_linear_infinite]"></div>
@@ -95,7 +95,7 @@ const HomePage = () => {
         </section>
         <section
           id="features"
-          className="py-20 md:py-24 relative z-10 max-w-7xl mx-auto px-6 sm:px-8"
+          className="py-10 md:py-24 relative z-10 max-w-7xl mx-auto px-6 sm:px-8"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white p-8 md:p-10 rounded-[2rem] border border-[#E2EEDB] hover:border-[#82B85A] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
@@ -185,10 +185,10 @@ const HomePage = () => {
           className="max-w-7xl mx-auto px-6 sm:px-8 mt-12 lg:mt-20"
         >
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 font-fraunces">
               Designed for <span className="text-[#82B85A]">Obsession.</span>
             </h2>
-            <p className="text-lg md:text-xl text-gray-600">
+            <p className="text-base md:text-xl text-gray-600">
               A UI that rewards your body's natural symmetry.
             </p>
           </div>
@@ -314,9 +314,11 @@ const HomePage = () => {
                 alt="Kalora"
                 className="h-6 w-auto grayscale opacity-60"
               />
-              <span className="text-xl font-extrabold tracking-tighter text-gray-800">
-                Kalora
-              </span>
+              <img
+                src={logoText}
+                alt="Kalora"
+                className="h-4 w-auto grayscale opacity-60"
+              />
             </div>
             <p className="text-sm font-medium text-gray-500">
               &copy; {new Date().getFullYear()} Kalora. Aligning nature and

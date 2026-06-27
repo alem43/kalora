@@ -10,10 +10,10 @@ const HomePage = () => {
       <main className="relative z-10 w-full">
         <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">
           <div className="max-w-4xl mx-auto z-10 mt-14 sm:mt-24">
-            <p className="text-sm font-black tracking-widest text-[#82B85A] mb-6 font-fraunces">
+            <p className="text-sm md:text-xl font-black tracking-widest text-[#82B85A] mb-6 font-fraunces">
               TIMING IS EVERYTHING
             </p>
-            <h1 className="text-[2.625rem] sm:text-5xl md:text-7xl xl:text-7xl leading-none font-black mb-8 font-fraunces">
+            <h1 className="text-[2.625rem] sm:text-5xl md:text-[3.125rem] xl:text-7xl leading-none font-black mb-8 font-fraunces">
               A bowl of pasta at noon is{' '}
               <span className="text-[#82B85A] relative inline-block">
                 fuel.
@@ -47,7 +47,7 @@ const HomePage = () => {
                 </svg>
               </span>
             </h1>
-            <p className="text-base md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base md:text-[1.375rem] text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
               Stop counting what you eat. Start feeling <strong>when </strong>
               you eat. Kalora is the first metabolic compass that harmonizes
               your nutrition with your circadian rhythm.
@@ -55,13 +55,13 @@ const HomePage = () => {
             <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-20 w-full max-w-72 mx-auto sm:max-w-none">
               <a
                 href="/register"
-                className="bg-[#173A27] text-white px-10 py-4 rounded-full text-base font-bold hover:bg-[#204E35] hover:scale-105 hover:shadow-[0_8px_25px_rgba(23,58,39,0.3)] transition-all duration-300 w-full sm:w-auto block text-center"
+                className="bg-[#173A27] text-white px-10 py-4 rounded-full text-base md:text-lg font-bold hover:bg-[#204E35] hover:scale-105 hover:shadow-[0_8px_25px_rgba(23,58,39,0.3)] transition-all duration-300 w-full sm:w-auto block text-center"
               >
                 Start your journey
               </a>
               <a
                 href="#features"
-                className="bg-white border-2 border-[#E2EEDB] text-[#173A27] px-10 py-4 rounded-full text-base font-bold hover:border-[#82B85A] hover:bg-[#F4F9F1] hover:scale-105 transition-all duration-300 w-full sm:w-auto block text-center"
+                className="bg-white border-2 border-[#E2EEDB] text-[#173A27] px-10 py-4 rounded-full text-base md:text-lg font-bold hover:border-[#82B85A] hover:bg-[#F4F9F1] hover:scale-105 transition-all duration-300 w-full sm:w-auto block text-center"
               >
                 See how it works
               </a>
@@ -97,7 +97,7 @@ const HomePage = () => {
           id="features"
           className="py-10 md:py-24 relative z-10 max-w-7xl mx-auto px-6 sm:px-8"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="bg-white p-8 md:p-10 rounded-[2rem] border border-[#E2EEDB] hover:border-[#82B85A] hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
               <div className="w-14 h-14 rounded-2xl bg-[#F4F9F1] flex items-center justify-center mb-8 group-hover:bg-[#82B85A] transition-colors duration-300">
                 <svg
@@ -185,14 +185,13 @@ const HomePage = () => {
           className="max-w-7xl mx-auto px-6 sm:px-8 mt-12 lg:mt-20"
         >
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-black mb-4 font-fraunces">
+            <h2 className="text-4xl sm:text-[3.125rem] font-black mb-4 font-fraunces">
               Designed for <span className="text-[#82B85A]">Obsession.</span>
             </h2>
-            <p className="text-base md:text-xl text-gray-600">
+            <p className="text-base md:text-lg text-gray-600">
               A UI that rewards your body's natural symmetry.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[310px]">
             <div className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#E2EEDB] shadow-sm hover:shadow-xl transition-shadow duration-300 relative overflow-hidden group min-h-70 md:min-h-0 flex flex-col justify-between">
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4F9F1] rounded-bl-full z-0 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>

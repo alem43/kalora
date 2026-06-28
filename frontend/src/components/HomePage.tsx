@@ -5,15 +5,15 @@ import logoText from '../images/logo_text.png'
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] overflow-x-hidden antialiased">
+    <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] selection:bg-[#82B85A]/30 selection:text-[#173A27] overflow-x-hidden antialiased">
       <Navbar />
       <main className="relative z-10 w-full">
-        <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-7xl mx-auto px-6 sm:px-8">
-          <div className="max-w-4xl mx-auto z-10 mt-14 sm:mt-24">
+        <section className="relative py-16 md:py-24 flex flex-col items-center text-center max-w-360 mx-auto px-6 sm:px-8">
+          <div className="max-w-4xl xl:max-w-5xl mx-auto mt-14 sm:mt-24 lg:mt-12 xl:mt-24">
             <p className="text-sm md:text-xl font-black tracking-widest text-[#82B85A] mb-6 font-fraunces">
               TIMING IS EVERYTHING
             </p>
-            <h1 className="text-[2.625rem] sm:text-5xl md:text-[3.125rem] xl:text-7xl leading-none font-black mb-8 font-fraunces">
+            <h1 className="text-[2.625rem] sm:text-5xl md:text-[3.125rem] lg:text-6xl xl:text-7xl leading-none font-black mb-8 font-fraunces">
               A bowl of pasta at noon is{' '}
               <span className="text-[#82B85A] relative inline-block">
                 fuel.
@@ -182,10 +182,10 @@ const HomePage = () => {
         </section>
         <section
           id="bento-details"
-          className="max-w-7xl mx-auto px-6 sm:px-8 mt-12 lg:mt-20"
+          className="max-w-360 mx-auto px-6 sm:px-8 mt-12 lg:mt-20"
         >
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-[3.125rem] font-black mb-4 font-fraunces">
+            <h2 className="text-4xl sm:text-[3.125rem] xl:text-6xl font-black mb-4 font-fraunces">
               Designed for <span className="text-[#82B85A]">Obsession.</span>
             </h2>
             <p className="text-base md:text-lg text-gray-600">

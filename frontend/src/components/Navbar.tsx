@@ -28,7 +28,7 @@ const Navbar = () => {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4 md:px-6 pointer-events-none">
-      <div className="max-w-5xl mx-auto pointer-events-auto">
+      <div className="max-w-360 mx-auto pointer-events-auto">
         <div className="bg-white/80 backdrop-blur-2xl border border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-2xl px-6 transition-all duration-500 hover:shadow-[0_8px_30px_rgb(130,184,90,0.08)] overflow-hidden">
           <div className="h-16 flex justify-between items-center">
             <Link
@@ -92,7 +92,6 @@ const Navbar = () => {
                 </>
               )}
             </div>
-
             <button
               className="md:hidden relative w-8 h-8 flex items-center justify-center text-[#173A27] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#82B85A] rounded-lg"
               onClick={() => setIsMobileMenuOpen((open) => !open)}

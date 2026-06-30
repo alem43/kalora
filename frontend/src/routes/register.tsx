@@ -271,7 +271,7 @@ function RouteComponent() {
                     to="/login"
                     className="text-green-600 hover:text-green-700 font-medium"
                   >
-                    Sign in
+                    Log in
                   </Link>
                 </p>
                 <div className="flex justify-center">

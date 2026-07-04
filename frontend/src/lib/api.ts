@@ -69,6 +69,14 @@ async function request<T>(
   }
 }
 
+export type MeResponse = {
+  id: string
+  email: string
+  userName: string
+  calorieGoal: number
+  createdAt: number
+}
+
 export const api = {
   auth: {
     register: (data: unknown) =>
@@ -85,7 +93,7 @@ export const api = {
       request('/auth/logout', {
         method: 'POST',
       }),
-    me: () => request('/auth/me'),
+    me: () => request<MeResponse>('/auth/me'),
     googleLogin: (data: { credential: string }) =>
       request('/auth/google', {
         method: 'POST',

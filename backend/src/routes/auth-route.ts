@@ -1,15 +1,16 @@
 import {Hono} from "hono";
 import {setCookie, deleteCookie, getCookie} from "hono/cookie";
 import bcrypt from "bcryptjs";
-import {db} from "../db";
-import {users, sessions} from "../db/schema";
+import {db} from "../db/index.js";
+import {users, sessions} from "../db/schema.js";
 import {eq} from "drizzle-orm";
 import {createSession, hashPassword} from "../utils/auth-helpers.js";
 import {registerSchema, loginSchema} from "../utils/auth-validation.js";
-import {authMiddleware} from "../middleware/requireAuth";
+import {authMiddleware} from "../middleware/requireAuth.js";
 import {AppError} from "../middleware/errorHandler.js";
 import {OAuth2Client} from "google-auth-library";
 import {onboardingSchema} from "../utils/auth-validation.js";
+import {calculateCalorieGoal} from "../utils/calorie-calculator.js";
 
 const authRoute = new Hono();
 
@@ -38,6 +39,15 @@ authRoute.post("/register", async (c) => {
   }
 
   const userId = crypto.randomUUID();
+  const calorieGoal = calculateCalorieGoal({
+    gender: data.gender,
+    age: data.age,
+    height: data.height,
+    weight: data.weight,
+    activityLevel: data.activityLevel,
+    goal: data.goal,
+  });
+
   const newUser = {
     id: userId,
     email: data.email,
@@ -50,6 +60,7 @@ authRoute.post("/register", async (c) => {
     goalWeight: data.goalWeight || null,
     activityLevel: data.activityLevel,
     goal: data.goal,
+    calorieGoal,
     onboardingCompleted: true,
     createdAt: Date.now(),
   };
@@ -108,6 +119,7 @@ authRoute.get("/me", authMiddleware, async (c) => {
       id: users.id,
       email: users.email,
       userName: users.userName,
+      calorieGoal: users.calorieGoal,
       createdAt: users.createdAt,
     })
     .from(users)
@@ -153,6 +165,15 @@ authRoute.post("/google", async (c) => {
 
   if (!user) {
     const userId = crypto.randomUUID();
+    const calorieGoal = calculateCalorieGoal({
+      gender: "other",
+      age: 25,
+      height: 170,
+      weight: 70,
+      activityLevel: "moderate",
+      goal: "maintain",
+    });
+
     const newUser = {
       id: userId,
       email: payload.email,
@@ -165,6 +186,7 @@ authRoute.post("/google", async (c) => {
       goalWeight: null,
       activityLevel: "moderate",
       goal: "maintain",
+      calorieGoal,
       onboardingCompleted: false,
       createdAt: Date.now(),
     };
@@ -193,6 +215,15 @@ authRoute.patch("/onboarding", authMiddleware, async (c) => {
     throw new AppError(404, "User not found", "USER_NOT_FOUND");
   }
 
+  const calorieGoal = calculateCalorieGoal({
+    gender: data.gender,
+    age: data.age,
+    height: data.height,
+    weight: data.weight,
+    activityLevel: data.activityLevel,
+    goal: data.goal,
+  });
+
   await db
     .update(users)
     .set({
@@ -203,6 +234,7 @@ authRoute.patch("/onboarding", authMiddleware, async (c) => {
       goalWeight: data.goalWeight || null,
       activityLevel: data.activityLevel,
       goal: data.goal,
+      calorieGoal,
       onboardingCompleted: true,
     })
     .where(eq(users.id, userId));

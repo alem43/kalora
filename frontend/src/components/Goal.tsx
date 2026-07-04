@@ -7,19 +7,24 @@ interface GoalProps {
 
 const Goal = ({ refreshKey }: GoalProps) => {
   const [foods, setFoods] = React.useState<any[]>([])
+  const [goalCalories, setGoalCalories] = React.useState<number>(2000)
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
   useEffect(() => {
-    fetchFoods()
+    fetchData()
   }, [refreshKey])
 
-  const fetchFoods = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true)
       setError(null)
-      const data = await api.food.list()
-      setFoods(data)
+      const [foodData, meData] = await Promise.all([
+        api.food.list(),
+        api.auth.me(),
+      ])
+      setFoods(foodData)
+      setGoalCalories(meData.calorieGoal)
     } catch (err) {
       if (err instanceof ApiError) {
         setError(`Error loading food logs: ${err.code}`)
@@ -36,11 +41,13 @@ const Goal = ({ refreshKey }: GoalProps) => {
     (sum: number, food: any) => sum + Number(food.calories || 0),
     0,
   )
-  const goalCalories = totalCalories > 0 ? totalCalories + 500 : 2000
   const percentage = Math.min(
     100,
     Math.round((totalCalories / goalCalories) * 100),
   )
+  const diff = goalCalories - totalCalories
+  const remainingLabel =
+    diff >= 0 ? `${diff} kcal remaining` : `${-diff} kcal over`
 
   if (loading) {
     return (
@@ -95,8 +102,8 @@ const Goal = ({ refreshKey }: GoalProps) => {
             <span className="text-[#173A27]">
               {percentage}% of baseline reached
             </span>
-            <span className="text-[#82B85A]">
-              {goalCalories - totalCalories} kcal remaining
+            <span className={diff >= 0 ? 'text-[#82B85A]' : 'text-[#805033]'}>
+              {remainingLabel}
             </span>
           </div>
           <div className="w-full h-5 bg-[#F4F9F1] rounded-full p-1 border border-[#E2EEDB] overflow-hidden">

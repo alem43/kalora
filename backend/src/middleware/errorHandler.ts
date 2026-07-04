@@ -24,7 +24,9 @@ export async function errorHandler(c: Context, next: Next) {
           error: error.message,
           code: error.code,
         },
-        error.status,
+        {
+          status: error.status as any,
+        },
       );
     }
 
@@ -33,12 +35,14 @@ export async function errorHandler(c: Context, next: Next) {
         {
           error: "Validation failed",
           code: "VALIDATION_ERROR",
-          details: error.errors.map((e) => ({
+          details: error.issues.map((e) => ({
             path: e.path.join("."),
             message: e.message,
           })),
         },
-        400,
+        {
+          status: 400,
+        },
       );
     }
 
@@ -47,7 +51,9 @@ export async function errorHandler(c: Context, next: Next) {
         error: "Internal server error",
         code: "INTERNAL_ERROR",
       },
-      500,
+      {
+        status: 500,
+      },
     );
   }
 }

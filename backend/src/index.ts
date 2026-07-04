@@ -5,9 +5,12 @@ import {z} from "zod";
 import foodRoute from "./routes/food.js";
 import authRoute from "./routes/auth-route.js";
 import {authMiddleware} from "./middleware/requireAuth.js";
-import {AppError} from "./middleware/errorHandler.js"; // ← ADD THIS LINE
+import {AppError} from "./middleware/errorHandler.js";
+import type {Variables} from "./types/hono.js";
 
-const app = new Hono();
+const app = new Hono<{
+  Variables: Variables;
+}>();
 
 const API_PORT = parseInt(process.env.API_PORT || "8787", 10);
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
@@ -28,11 +31,10 @@ app.route("/auth", authRoute);
 
 app.use("/protected", authMiddleware);
 app.get("/protected", (c) => {
-  const user = c.get("user");
-  return c.text(`ok protected: ${user.email}`);
+  const userId = c.get("userId");
+  return c.text(`ok protected: ${userId}`);
 });
 
-// Global error handler – now with the correct import
 app.onError((err, c) => {
   console.error("Error:", err);
 
@@ -47,14 +49,13 @@ app.onError((err, c) => {
     body = {
       error: "Validation failed",
       code: "VALIDATION_ERROR",
-      details: err.errors.map((e) => ({
+      details: err.issues.map((e) => ({
         path: e.path.join("."),
         message: e.message,
       })),
     };
   }
 
-  // Explicitly construct a Response with CORS headers
   return new Response(JSON.stringify(body), {
     status,
     headers: {

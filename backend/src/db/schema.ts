@@ -37,6 +37,7 @@ export const users = sqliteTable("users", {
   goalWeight: integer("goal_weight"),
   activityLevel: text("activity_level").notNull(),
   goal: text("goal").notNull(),
+  calorieGoal: integer("calorie_goal").notNull().default(2000),
   onboardingCompleted: integer("onboarding_completed", {mode: "boolean"})
     .notNull()
     .default(false),

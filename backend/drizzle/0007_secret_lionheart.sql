@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `calorie_goal` integer DEFAULT 2000 NOT NULL;

@@ -5,6 +5,7 @@ import {eq, and, gte} from "drizzle-orm";
 import {authMiddleware} from "../middleware/requireAuth.js";
 import {createFoodLogSchema} from "../utils/food-validation.js";
 import {AppError} from "../middleware/errorHandler.js";
+import type {Variables} from "../types/hono.js";
 
 function detectMealType(date: Date) {
   const h = date.getHours();
@@ -14,7 +15,9 @@ function detectMealType(date: Date) {
   return "snack";
 }
 
-const food = new Hono();
+const food = new Hono<{
+  Variables: Variables;
+}>();
 
 food.use("*", authMiddleware);
 

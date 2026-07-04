@@ -1,13 +1,17 @@
 import type {Context, Next} from "hono";
+import type {Variables} from "../types/hono.js";
 import {getCookie} from "hono/cookie";
-import {db} from "../db";
-import {sessions} from "../db/schema";
+import {db} from "../db/index.js";
+import {sessions} from "../db/schema.js";
 import {eq} from "drizzle-orm";
 
 const SESSION_EXPIRY_DAYS = 7;
 const SESSION_EXPIRY_MS = SESSION_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
 
-export async function authMiddleware(c: Context, next: Next) {
+export async function authMiddleware(
+  c: Context<{Variables: Variables}>,
+  next: Next,
+) {
   const token = getCookie(c, "session");
 
   if (!token) {

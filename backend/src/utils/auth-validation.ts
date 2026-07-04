@@ -14,9 +14,7 @@ export const registerSchema = z.object({
     .string()
     .min(8, "Password must be at least 8 characters")
     .max(200),
-  gender: z.enum(["male", "female", "other"], {
-    errorMap: () => ({message: "Invalid gender"}),
-  }),
+  gender: z.enum(["male", "female", "other"]),
   age: z.number().int().min(13, "Must be at least 13").max(120),
   height: z.number().int().min(100, "Height must be at least 100cm").max(250),
   weight: z.number().min(30, "Weight must be at least 30kg").max(300),

@@ -12,7 +12,7 @@ const app = new Hono<{
   Variables: Variables;
 }>();
 
-const API_PORT = parseInt(process.env.API_PORT || "8787", 10);
+const API_PORT = Number(process.env.PORT || process.env.API_PORT || 8787);
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(

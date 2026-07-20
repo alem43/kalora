@@ -107,7 +107,7 @@ authRoute.post("/logout", async (c) => {
     await db.delete(sessions).where(eq(sessions.token, sessionToken));
   }
 
-  deleteCookie(c, "session");
+  deleteCookie(c, "session", {path: "/", sameSite: "None", secure: true});
   return c.json({message: "Logged out"});
 });
 

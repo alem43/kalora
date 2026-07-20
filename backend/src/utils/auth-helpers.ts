@@ -6,7 +6,8 @@ import {sessions} from "../db/schema.js";
 
 const COOKIE_CONFIG = {
   httpOnly: true,
-  sameSite: "Lax" as const,
+  sameSite: "None" as const,
+  secure: true,
   path: "/",
   maxAge: 60 * 60 * 24 * 7,
 };

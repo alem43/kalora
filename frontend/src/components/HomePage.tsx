@@ -45,7 +45,7 @@ const CAPABILITIES = [
     render: (isActive: boolean) => (
       <svg
         viewBox="0 0 300 160"
-        className="w-full max-w-[280px] drop-shadow-2xl overflow-visible"
+        className="w-full max-w-70 drop-shadow-2xl overflow-visible"
       >
         <defs>
           <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -118,7 +118,7 @@ const CAPABILITIES = [
     title: 'Metabolic momentum',
     body: 'Eat inside your window and your momentum score climbs. Step outside it and Kalora quietly resets your next target.',
     render: (isActive: boolean) => (
-      <div className="flex items-end gap-2.5 h-32 w-full max-w-[280px]">
+      <div className="flex items-end gap-2.5 h-32 w-full max-w-70">
         {MOMENTUM_BARS.map((h, i) => (
           <div
             key={i}
@@ -142,7 +142,7 @@ const CAPABILITIES = [
         {HEATMAP_LEVELS.map((level, i) => (
           <div
             key={i}
-            className="w-5 h-5 sm:w-6 sm:h-6 rounded-[4px]"
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg"
             style={{
               background: HEATMAP_COLORS[level],
               opacity: isActive ? 1 : 0,
@@ -287,7 +287,7 @@ function DebtRing() {
   return (
     <div
       ref={ref}
-      className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[10px] border-[#F3EAE3] flex items-center justify-center relative shrink-0 drop-shadow-xl bg-white"
+      className="w-32 h-32 md:w-40 md:h-40 rounded-full border-10 border-[#F3EAE3] flex items-center justify-center relative shrink-0 drop-shadow-xl bg-white"
     >
       <svg
         viewBox="0 0 120 120"
@@ -490,7 +490,7 @@ const HomePage = () => {
 
       <div
         aria-hidden="true"
-        className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#070E0A]"
+        className="fixed inset-0 z-1000 flex items-center justify-center bg-[#070E0A]"
         style={{
           clipPath: loaded ? 'inset(0 0 100% 0)' : 'inset(0 0 0 0)',
           transition: `clip-path 1.2s ${EASE} 0.2s`,
@@ -504,12 +504,12 @@ const HomePage = () => {
 
       <div
         ref={cursorDotRef}
-        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden lg:block w-1.5 h-1.5 -ml-[3px] -mt-[3px] rounded-full bg-[#7CA655] will-change-transform"
+        className="pointer-events-none fixed top-0 left-0 z-9999 hidden lg:block w-1.5 h-1.5 -ml-0.75 -mt-0.75 rounded-full bg-[#7CA655] will-change-transform"
       />
 
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[100] opacity-[0.04] mix-blend-overlay"
+        className="pointer-events-none fixed inset-0 z-100 opacity-[0.04] mix-blend-overlay"
         style={{ backgroundImage: `url("${GRAIN}")` }}
       />
 
@@ -604,7 +604,7 @@ const HomePage = () => {
                 is forced to pay off tomorrow.
               </p>
             </div>
-            <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-[21] mask-image-btt">
+            <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-21 mask-image-btt">
               <img
                 src={IMAGE_NIGHT}
                 alt=""
@@ -646,10 +646,10 @@ const HomePage = () => {
         <section
           id="features"
           aria-labelledby="features-heading"
-          className="max-w-[90rem] mx-auto px-6 lg:px-12 py-16 md:py-32"
+          className="max-w-360 mx-auto px-6 lg:px-12 py-16 md:py-32"
         >
           <div className="md:grid md:grid-cols-12 md:gap-16 items-start">
-            <div className="hidden md:block md:col-span-6 lg:col-span-7 sticky top-32 h-[500px] rounded-[3rem] overflow-hidden bg-[#070E0A] border border-white/5 shadow-2xl">
+            <div className="hidden md:block md:col-span-6 lg:col-span-7 sticky top-32 h-125 rounded-[3rem] overflow-hidden bg-[#070E0A] border border-white/5 shadow-2xl">
               {CAPABILITIES.map((c, i) => (
                 <div
                   key={c.title}
@@ -672,7 +672,7 @@ const HomePage = () => {
                   ref={(el) => (itemRefs.current[i] = el)}
                   className="max-w-lg interactive"
                 >
-                  <div className="md:hidden mb-8 rounded-[2rem] overflow-hidden bg-[#070E0A] border border-white/5 p-8 flex items-center justify-center h-[260px] sm:h-[320px]">
+                  <div className="md:hidden mb-8 rounded-[2rem] overflow-hidden bg-[#070E0A] border border-white/5 p-8 flex items-center justify-center h-65 sm:h-80">
                     {c.render(true)}
                   </div>
                   <span
@@ -713,7 +713,7 @@ const HomePage = () => {
         <section
           id="bento-details"
           aria-labelledby="bento-heading"
-          className="max-w-[90rem] mx-auto px-6 lg:px-12 py-20 md:py-32"
+          className="max-w-360 mx-auto px-6 lg:px-12 py-20 md:py-32"
         >
           <div className="text-center mb-20 max-w-3xl mx-auto interactive">
             <h2

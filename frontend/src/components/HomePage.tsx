@@ -2,27 +2,19 @@ import React, { useEffect, useRef, useState } from 'react'
 import Navbar from './Navbar'
 import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
-
-// Placeholder editorial photography (Unsplash License — free for commercial use,
-// no attribution required). Swap for original Kalora photography when available.
 const IMAGE_DAY =
-  'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?q=80&w=1400&auto=format&fit=crop'
-const IMAGE_NIGHT =
-  'https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?q=80&w=1400&auto=format&fit=crop'
+  'https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?q=80&w=1800&auto=format&fit=crop'
+const IMAGE_NIGHT = IMAGE_DAY
 const IMAGE_NIGHT_WIDE =
   'https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?q=80&w=1800&auto=format&fit=crop'
-
 const GRAIN =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"
-
 const EASE = 'cubic-bezier(.22,1,.36,1)'
-
-// Light → night color interpolation, driven by how far down the page you are
-function hexToRgb(hex) {
+function hexToRgb(hex: string) {
   const n = parseInt(hex.replace('#', ''), 16)
   return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
 }
-function mix(hexA, hexB, t) {
+function mix(hexA: string, hexB: string, t: number) {
   const a = hexToRgb(hexA)
   const b = hexToRgb(hexB)
   const r = Math.round(a[0] + (b[0] - a[0]) * t)
@@ -36,6 +28,7 @@ const MARQUEE_WORDS = [
   'Metabolic timing',
   'Noon to midnight',
   'Fuel, not debt',
+  'Biological alignment',
 ]
 
 const HEATMAP_LEVELS = [
@@ -43,35 +36,59 @@ const HEATMAP_LEVELS = [
   3, 1, 4, 4, 2, 0, 3, 4, 1,
 ]
 const HEATMAP_COLORS = ['#173820', '#2C5333', '#4B7A45', '#7CA655', '#B8CC93']
-
 const MOMENTUM_BARS = [38, 52, 68, 84, 30, 48, 62, 78, 92]
 
 const CAPABILITIES = [
   {
     title: 'Circadian mapping',
-    body: 'A living timeline of your eating window, plotted against the hours your metabolism actually wants fuel — not a food diary, a rhythm.',
-    render: (isActive) => (
-      <svg viewBox="0 0 300 160" className="w-full max-w-[260px]">
+    body: 'A living timeline of your eating window, plotted against the hours your metabolism actually wants fuel.',
+    render: (isActive: boolean) => (
+      <svg
+        viewBox="0 0 300 160"
+        className="w-full max-w-[280px] drop-shadow-2xl overflow-visible"
+      >
+        <defs>
+          <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#4B7A45" stopOpacity="0.2" />
+            <stop offset="50%" stopColor="#B8CC93" stopOpacity="1" />
+            <stop offset="100%" stopColor="#4B7A45" stopOpacity="0.2" />
+          </linearGradient>
+          <filter id="blur">
+            <feGaussianBlur stdDeviation="4" />
+          </filter>
+        </defs>
         <path
           d="M10,125 C55,25 105,20 150,58 C195,96 245,140 290,45"
           fill="none"
-          stroke="#7CA655"
-          strokeWidth="2.5"
+          stroke="url(#glow)"
+          strokeWidth="3.5"
           pathLength="1"
+          strokeLinecap="round"
           style={{
             strokeDasharray: 1,
             strokeDashoffset: isActive ? 0 : 1,
-            transition: `stroke-dashoffset 1.3s ${EASE}`,
+            transition: `stroke-dashoffset 1.5s ${EASE}`,
           }}
+        />
+        <path
+          d="M10,125 C55,25 105,20 150,58 C195,96 245,140 290,45"
+          fill="none"
+          stroke="#B8CC93"
+          strokeWidth="8"
+          filter="url(#blur)"
+          opacity={isActive ? 0.3 : 0}
+          style={{ transition: `opacity 1.5s ${EASE}` }}
         />
         <circle
           cx="150"
           cy="58"
-          r="5.5"
+          r="6"
           fill="#FAF8F2"
+          className="drop-shadow-[0_0_12px_rgba(255,255,255,1)]"
           style={{
             opacity: isActive ? 1 : 0,
-            transition: `opacity 400ms ease 1.1s`,
+            transform: isActive ? 'scale(1)' : 'scale(0)',
+            transition: `all 800ms ${EASE} 1.1s`,
           }}
         />
         <line
@@ -79,31 +96,40 @@ const CAPABILITIES = [
           y1="58"
           x2="150"
           y2="150"
-          stroke="#7CA655"
+          stroke="#FAF8F2"
           strokeWidth="1"
           strokeDasharray="3 4"
-          opacity="0.5"
+          opacity="0.4"
         />
-        <text x="150" y="146" textAnchor="middle" fill="#C7D6BE" fontSize="11">
-          peak window
+        <text
+          x="150"
+          y="146"
+          textAnchor="middle"
+          fill="#FAF8F2"
+          fontSize="10"
+          className="font-mono tracking-widest uppercase opacity-80"
+        >
+          Peak Window
         </text>
       </svg>
     ),
   },
   {
     title: 'Metabolic momentum',
-    body: 'Eat inside your window and your momentum score climbs. Step outside it and Kalora quietly resets your next target — no lecture, just a new plan.',
-    render: (isActive) => (
-      <div className="flex items-end gap-2 h-32 w-full max-w-[260px]">
+    body: 'Eat inside your window and your momentum score climbs. Step outside it and Kalora quietly resets your next target.',
+    render: (isActive: boolean) => (
+      <div className="flex items-end gap-2.5 h-32 w-full max-w-[280px]">
         {MOMENTUM_BARS.map((h, i) => (
           <div
             key={i}
-            className={`flex-1 rounded-t-sm ${h < 40 ? 'bg-[#7C4A30]' : 'bg-[#7CA655]'}`}
+            className={`flex-1 rounded-t-sm ${h < 40 ? 'bg-[#7C4A30]' : 'bg-[#7CA655]'} relative group`}
             style={{
               height: isActive ? `${h}%` : '4%',
-              transition: `height 700ms ${EASE} ${isActive ? i * 55 : 0}ms`,
+              transition: `height 800ms ${EASE} ${isActive ? i * 65 : 0}ms`,
             }}
-          />
+          >
+            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         ))}
       </div>
     ),
@@ -111,19 +137,17 @@ const CAPABILITIES = [
   {
     title: 'Visual harmony',
     body: 'String enough good windows together and your month turns into a calendar of color you actually want to look back on.',
-    render: (isActive) => (
-      <div className="grid grid-cols-7 gap-1.5">
+    render: (isActive: boolean) => (
+      <div className="grid grid-cols-7 gap-2">
         {HEATMAP_LEVELS.map((level, i) => (
           <div
             key={i}
-            className="w-4 h-4 sm:w-5 sm:h-5 rounded-[3px]"
+            className="w-5 h-5 sm:w-6 sm:h-6 rounded-[4px]"
             style={{
               background: HEATMAP_COLORS[level],
               opacity: isActive ? 1 : 0,
-              transform: isActive ? 'scale(1)' : 'scale(0.4)',
-              transition: `opacity 450ms ease ${isActive ? i * 10 : 0}ms, transform 450ms ${EASE} ${
-                isActive ? i * 10 : 0
-              }ms`,
+              transform: isActive ? 'scale(1)' : 'scale(0.2)',
+              transition: `opacity 500ms ease ${isActive ? i * 12 : 0}ms, transform 500ms ${EASE} ${isActive ? i * 12 : 0}ms`,
             }}
           />
         ))}
@@ -132,34 +156,46 @@ const CAPABILITIES = [
   },
 ]
 
-function useReveal(threshold = 0.2) {
+function useReveal(
+  delay = 0,
+  threshold = 0.2,
+): [React.RefObject<any>, boolean] {
   const ref = useRef(null)
   const [visible, setVisible] = useState(false)
+
   useEffect(() => {
     const el = ref.current
-    if (!el) return undefined
+    if (!el) return
+    let timer: ReturnType<typeof setTimeout> | undefined
+
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true)
+          timer = setTimeout(() => setVisible(true), delay)
           io.unobserve(el)
         }
       },
       { threshold },
     )
+
     io.observe(el)
-    return () => io.disconnect()
-  }, [threshold])
+
+    return () => {
+      if (timer) clearTimeout(timer)
+      io.disconnect()
+    }
+  }, [threshold, delay])
+
   return [ref, visible]
 }
 
-function useCountUp(active, duration = 1200) {
+function useCountUp(active: boolean, duration = 1200) {
   const [t, setT] = useState(0)
   useEffect(() => {
     if (!active) return undefined
-    let raf
-    let start = null
-    const step = (ts) => {
+    let raf: number
+    let start: number | null = null
+    const step = (ts: number) => {
       if (start === null) start = ts
       const p = Math.min((ts - start) / duration, 1)
       setT(1 - Math.pow(1 - p, 3))
@@ -171,111 +207,225 @@ function useCountUp(active, duration = 1200) {
   return t
 }
 
-function Reveal({ as: Tag = 'div', delay = 0, className = '', children }) {
-  const [ref, visible] = useReveal()
+function BentoCard({
+  children,
+  delay,
+  className,
+}: {
+  children: React.ReactNode
+  delay: number
+  className: string
+}) {
+  const [ref, visible] = useReveal(delay, 0.1)
+  const cardRef = useRef<HTMLDivElement | null>(null)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    cardRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`)
+    cardRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`)
+  }
+
   return (
-    <Tag
-      ref={ref}
-      className={`transition-all duration-700 ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-      } ${className}`}
-      style={{ transitionDelay: `${delay}ms`, transitionTimingFunction: EASE }}
+    <div
+      ref={(el) => {
+        ref.current = el
+        cardRef.current = el
+      }}
+      onMouseMove={handleMouseMove}
+      className={`group relative rounded-[2rem] overflow-hidden transition-all duration-1000 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'} ${className}`}
+      style={{ transitionTimingFunction: EASE }}
     >
-      {children}
-    </Tag>
+      <div
+        className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"
+        style={{
+          background:
+            'radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.08), transparent 40%)',
+        }}
+      />
+      <div className="relative z-10 w-full h-full">{children}</div>
+    </div>
   )
 }
 
-function BigNumeral({ to = 24, color = '#EFE7D8' }) {
-  const [ref, visible] = useReveal(0.5)
-  const t = useCountUp(visible, 1500)
+function BigNumeral({ to = 24 }: { to?: number }) {
+  const [ref, visible] = useReveal(0, 0.5)
+  const t = useCountUp(visible, 2200)
   return (
-    <span
+    <div
       ref={ref}
-      className="font-fraunces italic font-black text-[6.5rem] sm:text-[9rem] md:text-[12rem] leading-none select-none block"
-      style={{ color, transition: `color 300ms linear` }}
+      className="relative flex justify-center items-center w-full overflow-hidden py-16 md:py-28 bg-[#070E0A]"
     >
-      {Math.round(t * to)}
-    </span>
+      <span
+        className="font-fraunces italic font-black text-[12rem] sm:text-[18rem] md:text-[26rem] lg:text-[34rem] leading-none select-none tracking-tighter"
+        style={{
+          background:
+            'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.00) 100%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          color: 'transparent',
+        }}
+      >
+        {Math.round(t * to)}
+      </span>
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <span className="font-mono text-xs md:text-sm tracking-[0.4em] uppercase text-white/70 bg-[#070E0A] px-8 py-3 rounded-full border border-white/10 backdrop-blur-xl shadow-2xl">
+          Hours in a metabolic cycle
+        </span>
+      </div>
+    </div>
   )
 }
 
 function DebtRing() {
-  const [ref, visible] = useReveal(0.5)
-  const t = useCountUp(visible, 1200)
+  const [ref, visible] = useReveal(0, 0.5)
+  const t = useCountUp(visible, 1500)
   const circumference = 327
   const dashoffset = circumference - t * (circumference - 110)
-  const hours = t >= 0.999 ? '2' : (t * 2).toFixed(1)
+  const hours = t >= 0.99 ? '2.0' : (t * 2).toFixed(1)
+
   return (
     <div
       ref={ref}
-      className="w-28 h-28 sm:w-32 sm:h-32 rounded-full border-8 border-[#F3EAE3] flex items-center justify-center relative shrink-0"
+      className="w-32 h-32 md:w-40 md:h-40 rounded-full border-[10px] border-[#F3EAE3] flex items-center justify-center relative shrink-0 drop-shadow-xl bg-white"
     >
       <svg
         viewBox="0 0 120 120"
-        className="absolute inset-0 w-full h-full -rotate-90"
+        className="absolute inset-0 w-full h-full -rotate-90 filter drop-shadow-md"
       >
         <circle
           cx="60"
           cy="60"
-          r="52"
+          r="50"
           stroke="#7C4A30"
-          strokeWidth="8"
+          strokeWidth="10"
           fill="none"
           strokeDasharray={circumference}
           strokeDashoffset={dashoffset}
           strokeLinecap="round"
         />
       </svg>
-      <span className="text-xl sm:text-2xl font-black text-[#7C4A30]">
-        -{hours}h
-      </span>
+      <div className="text-center">
+        <span className="block text-2xl md:text-3xl font-black text-[#7C4A30] leading-none">
+          -{hours}h
+        </span>
+        <span className="block font-mono text-[9px] uppercase tracking-widest text-[#7C4A30]/60 mt-1">
+          Debt
+        </span>
+      </div>
     </div>
   )
 }
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false)
-  const [cursorActive, setCursorActive] = useState(false)
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 })
   const [scrollY, setScrollY] = useState(0)
-  const [active, setActive] = useState(0)
-  const cursorTarget = useRef({ x: 0, y: 0 })
-  const itemRefs = useRef([])
+  const [activeCap, setActiveCap] = useState(0)
+
+  const cursorDotRef = useRef<HTMLDivElement>(null)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 300)
+    document.title = 'Kalora'
+
+    const description =
+      'Kalora connects what you eat with when you eat it, helping you build nutrition habits around your natural biological rhythm.'
+
+    let meta = document.querySelector('meta[name="description"]')
+
+    if (!meta) {
+      meta = document.createElement('meta')
+      meta.setAttribute('name', 'description')
+      document.head.appendChild(meta)
+    }
+
+    meta.setAttribute('content', description)
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 800)
     return () => clearTimeout(t)
   }, [])
-
-  // Smoothed ("lerped") cursor follower
   useEffect(() => {
-    const move = (e) => {
-      cursorTarget.current = { x: e.clientX, y: e.clientY }
+    let mouseX = -100
+    let mouseY = -100
+    let cursorX = -100
+    let cursorY = -100
+    let heroSpotR = 0
+    let targetHeroSpotR = 0
+    let heroSpotX = 50
+    let heroSpotY = 50
+    let rafId: number
+
+    const onMove = (event: MouseEvent) => {
+      mouseX = event.clientX
+      mouseY = event.clientY
+
+      if (!heroRef.current) return
+
+      const rect = heroRef.current.getBoundingClientRect()
+      const insideHero =
+        event.clientX >= rect.left &&
+        event.clientX <= rect.right &&
+        event.clientY >= rect.top &&
+        event.clientY <= rect.bottom
+
+      if (insideHero) {
+        heroSpotX = event.clientX - rect.left
+        heroSpotY = event.clientY - rect.top
+        targetHeroSpotR = 520
+      }
     }
-    window.addEventListener('mousemove', move)
-    let raf
+
+    const onHeroLeave = () => {
+      targetHeroSpotR = 0
+    }
+
+    window.addEventListener('mousemove', onMove, { passive: true })
+    heroRef.current?.addEventListener('mouseleave', onHeroLeave)
+
     const loop = () => {
-      setCursorPos((p) => ({
-        x: p.x + (cursorTarget.current.x - p.x) * 0.2,
-        y: p.y + (cursorTarget.current.y - p.y) * 0.2,
-      }))
-      raf = requestAnimationFrame(loop)
+      cursorX += (mouseX - cursorX) * 0.16
+      cursorY += (mouseY - cursorY) * 0.16
+      heroSpotR += (targetHeroSpotR - heroSpotR) * 0.08
+
+      if (cursorDotRef.current) {
+        cursorDotRef.current.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`
+      }
+
+      if (heroRef.current) {
+        heroRef.current.style.setProperty('--spot-x', `${heroSpotX}px`)
+        heroRef.current.style.setProperty('--spot-y', `${heroSpotY}px`)
+        heroRef.current.style.setProperty('--spot-r', `${heroSpotR}px`)
+      }
+
+      rafId = requestAnimationFrame(loop)
     }
-    raf = requestAnimationFrame(loop)
+
+    rafId = requestAnimationFrame(loop)
+
     return () => {
-      window.removeEventListener('mousemove', move)
-      cancelAnimationFrame(raf)
+      window.removeEventListener('mousemove', onMove)
+      heroRef.current?.removeEventListener('mouseleave', onHeroLeave)
+      cancelAnimationFrame(rafId)
     }
   }, [])
-
-  // Scroll progress, throttled to animation frames — powers the parallax and the day/night rail
   useEffect(() => {
-    let raf = null
+    let raf: number | null = null
+    let lastUpdate = 0
+
     const onScroll = () => {
       if (raf) return
+
       raf = requestAnimationFrame(() => {
-        setScrollY(window.scrollY)
+        const now = performance.now()
+
+        if (now - lastUpdate >= 40) {
+          setScrollY(window.scrollY)
+          lastUpdate = now
+        }
+
         raf = null
       })
     }
@@ -283,13 +433,12 @@ const HomePage = () => {
     onScroll()
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
-
   useEffect(() => {
     const observers = itemRefs.current.map((el, i) => {
       if (!el) return null
       const io = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) setActive(i)
+          if (entry.isIntersecting) setActiveCap(i)
         },
         { rootMargin: '-45% 0px -45% 0px', threshold: 0 },
       )
@@ -305,374 +454,250 @@ const HomePage = () => {
         document.documentElement.clientHeight
       : 0
   const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0
-  const parallax = Math.min(scrollY * 0.12, 90)
+  const dark = Math.min(progress * 1.5, 1)
 
-  // How "into the night" the page is — reaches full dark before the very bottom
-  // so the bento/footer stretch reads as settled night, not mid-transition.
-  const dark = Math.min(progress * 1.3, 1)
   const theme = {
-    bg: mix('#FAF8F2', '#0B140E', dark),
-    text: mix('#1B2A20', '#EDE7DA', dark),
+    bg: mix('#FAF8F2', '#070E0A', dark),
+    text: mix('#16301F', '#FAF8F2', dark),
     muted: mix('#5B5B50', '#9CA79B', dark),
-    border: mix('#DEEAD3', '#26392C', dark),
-    ghost: mix('#EFE7D8', '#16241A', dark),
-  }
-
-  const activateCursor = () => setCursorActive(true)
-  const deactivateCursor = () => setCursorActive(false)
-
-  const onMagnetMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    const x = e.clientX - rect.left - rect.width / 2
-    const y = e.clientY - rect.top - rect.height / 2
-    e.currentTarget.style.transform = `translate(${x / 7}px, ${y / 7}px)`
-  }
-  const onMagnetLeave = (e) => {
-    e.currentTarget.style.transform = 'translate(0px, 0px)'
-    deactivateCursor()
-  }
-
-  const onSpotMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
-    e.currentTarget.style.setProperty('--x', `${e.clientX - rect.left}px`)
-    e.currentTarget.style.setProperty('--y', `${e.clientY - rect.top}px`)
+    border: mix('#DEEAD3', '#1C2920', dark),
   }
 
   return (
     <div
-      className="kalora-home min-h-screen selection:bg-[#7CA655]/30 selection:text-[#16301F] overflow-x-hidden antialiased"
+      className="kalora-home min-h-screen selection:bg-[#7CA655]/40 selection:text-[#16301F] overflow-x-hidden antialiased"
       style={{
         backgroundColor: theme.bg,
         color: theme.text,
-        transition: 'background-color 250ms linear, color 250ms linear',
+        transition: 'background-color 400ms linear, color 400ms linear',
       }}
     >
       <style>{`
-        .kalora-home { --ease-k: ${EASE}; }
-        @keyframes kaloraRise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .mask-image-btt { mask-image: linear-gradient(to top, transparent, black 20%, black 100%); -webkit-mask-image: linear-gradient(to top, transparent, black 20%, black 100%); }
+        @keyframes kaloraRise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes kaloraMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
         @media (prefers-reduced-motion: reduce) {
-          .kalora-home *, .kalora-home *::before, .kalora-home *::after {
+          .kalora-home *,
+          .kalora-home *::before,
+          .kalora-home *::after {
             animation-duration: 0.01ms !important;
-            animation-delay: 0s !important;
+            animation-iteration-count: 1 !important;
             transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
           }
         }
       `}</style>
 
-      {/* Intro curtain — the one orchestrated page-load moment */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F2216]"
+        aria-hidden="true"
+        className="fixed inset-0 z-[1000] flex items-center justify-center bg-[#070E0A]"
         style={{
-          transform: loaded ? 'translateY(-100%)' : 'translateY(0)',
-          opacity: loaded ? 0 : 1,
+          clipPath: loaded ? 'inset(0 0 100% 0)' : 'inset(0 0 0 0)',
+          transition: `clip-path 1.2s ${EASE} 0.2s`,
           pointerEvents: loaded ? 'none' : 'auto',
-          transition: `transform 850ms ${EASE}, opacity 850ms ${EASE}`,
         }}
       >
-        <span className="font-fraunces italic text-2xl text-[#FAF8F2]/80">
-          Kalora
+        <span className="font-mono text-[10px] tracking-[0.5em] text-[#FAF8F2] uppercase animate-pulse">
+          Initializing Rhythm
         </span>
       </div>
 
-      {/* Custom cursor, smoothed toward the pointer */}
       <div
-        className="pointer-events-none fixed z-50 hidden md:block rounded-full bg-white mix-blend-difference"
-        style={{
-          width: cursorActive ? 52 : 10,
-          height: cursorActive ? 52 : 10,
-          left: cursorPos.x,
-          top: cursorPos.y,
-          transform: 'translate(-50%, -50%)',
-          transition: `width 250ms ${EASE}, height 250ms ${EASE}`,
-        }}
+        ref={cursorDotRef}
+        className="pointer-events-none fixed top-0 left-0 z-[9999] hidden lg:block w-1.5 h-1.5 -ml-[3px] -mt-[3px] rounded-full bg-[#7CA655] will-change-transform"
       />
 
-      {/* Day → night scroll rail, ties the whole page to the hero's circadian idea */}
-      <div className="pointer-events-none hidden lg:flex fixed left-7 top-1/2 -translate-y-1/2 z-40 flex-col items-center gap-3 h-[34vh]">
-        <span className="text-[10px] font-semibold tracking-wide text-[#4F6B3A]">
-          day
-        </span>
-        <div className="relative flex-1 w-px bg-linear-to-b from-[#7CA655]/60 via-[#DEEAD3] to-[#16301F]/70">
-          <div
-            className="absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-[#16301F] shadow-[0_0_0_4px_rgba(124,166,85,0.18)]"
-            style={{
-              top: `${progress * 100}%`,
-              transition: `top 120ms linear`,
-            }}
-          />
-        </div>
-        <span className="text-[10px] font-semibold tracking-wide text-[#16301F]">
-          night
-        </span>
-      </div>
-
-      {/* Ambient print grain */}
       <div
-        className="pointer-events-none fixed inset-0 z-30 opacity-[0.05] mix-blend-overlay"
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 z-[100] opacity-[0.04] mix-blend-overlay"
         style={{ backgroundImage: `url("${GRAIN}")` }}
       />
 
       <Navbar />
 
-      <main className="relative z-10 w-full">
-        {/* ---------- HERO ---------- */}
-        <section className="relative">
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            <div className="relative min-h-[58vh] md:min-h-[82vh] overflow-hidden">
+      <main id="main-content" className="relative z-10 w-full">
+        <section
+          ref={heroRef}
+          className="relative w-full h-screen overflow-hidden bg-[#FAF8F2] interactive"
+        >
+          <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-6 md:px-16 lg:px-24 z-10">
+            <div className="max-w-4xl mt-12 md:mt-0">
+              <div className="overflow-hidden mb-6">
+                <span
+                  className="block font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#7CA655] animate-[kaloraRise_1s_ease-out_both]"
+                  style={{ animationDelay: '1s' }}
+                >
+                  12:00 PM &middot; Circadian Peak
+                </span>
+              </div>
+              <h1
+                id="hero-heading"
+                className="font-fraunces text-[clamp(3.5rem,12vw,11rem)] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] leading-[0.85] font-black text-[#16301F] tracking-tight"
+              >
+                <span className="block overflow-hidden pb-2">
+                  <span
+                    className="block animate-[kaloraRise_1.2s_cubic-bezier(.22,1,.36,1)_both]"
+                    style={{ animationDelay: '1.1s' }}
+                  >
+                    Noon is
+                  </span>
+                </span>
+                <span className="block overflow-hidden">
+                  <span
+                    className="block animate-[kaloraRise_1.2s_cubic-bezier(.22,1,.36,1)_both]"
+                    style={{ animationDelay: '1.2s' }}
+                  >
+                    <em className="italic font-light pr-4 text-[#7CA655]">
+                      pure
+                    </em>{' '}
+                    fuel.
+                  </span>
+                </span>
+              </h1>
+              <p
+                className="mt-8 text-base md:text-lg text-[#5B5B50] max-w-sm animate-[kaloraRise_1s_ease-out_both]"
+                style={{ animationDelay: '1.3s' }}
+              >
+                A bowl of pasta at noon is pure energy, burned cleanly by a
+                waking metabolism.
+              </p>
+            </div>
+            <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-[-1] mask-image-btt">
               <img
                 src={IMAGE_DAY}
-                alt="A bright, overhead plate of avocado toast in morning light"
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{
-                  transform: `translateY(${parallax * 0.4}px) scale(1.08)`,
-                }}
+                alt=""
+                aria-hidden="true"
+                width="1800"
+                height="1200"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="w-full h-full object-cover object-center opacity-95 scale-[1.02]"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-[#FAF8F2] via-[#FAF8F2]/15 to-transparent" />
-              <div className="absolute inset-0 z-10 flex flex-col justify-end p-8 sm:p-12 lg:p-16">
-                <span
-                  className="text-sm font-semibold text-[#4F6B3A] mb-3"
-                  style={{
-                    animation: loaded ? `kaloraRise 0.8s ${EASE} both` : 'none',
-                    animationDelay: '0.85s',
-                    opacity: loaded ? undefined : 0,
-                  }}
-                >
-                  Noon
-                </span>
-                <h1
-                  className="font-fraunces text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] leading-[1.02] font-black text-[#16301F] max-w-md"
-                  style={{
-                    animation: loaded ? `kaloraRise 0.9s ${EASE} both` : 'none',
-                    animationDelay: '0.95s',
-                    opacity: loaded ? undefined : 0,
-                  }}
-                >
-                  A bowl of pasta at noon is fuel.
-                </h1>
-              </div>
             </div>
+          </div>
 
-            <div
-              className="relative min-h-[58vh] md:min-h-[82vh] overflow-hidden"
-              onMouseMove={onSpotMove}
-            >
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-[#070E0A] flex flex-col justify-center px-6 md:px-16 lg:px-24 z-20 overflow-hidden will-change-[clip-path]"
+            style={{
+              clipPath:
+                'circle(var(--spot-r, 0px) at var(--spot-x, 50%) var(--spot-y, 50%))',
+            }}
+          >
+            <div className="max-w-4xl relative z-30 mt-12 md:mt-0">
+              <span className="block font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#B8CC93] mb-6">
+                12:00 AM &middot; Rest State
+              </span>
+              <h2
+                aria-hidden="true"
+                className="font-fraunces text-[clamp(3.5rem,12vw,11rem)] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] leading-[0.85] font-black text-[#FAF8F2] tracking-tight"
+              >
+                <span className="block pb-2">Midnight</span>
+                <span className="block">
+                  <em className="italic font-light text-[#4B7A45] pr-4">is</em>{' '}
+                  debt.
+                </span>
+              </h2>
+              <p className="mt-8 text-base md:text-lg text-[#9CA79B] max-w-sm">
+                At midnight, that same bowl becomes a metabolic loan your body
+                is forced to pay off tomorrow.
+              </p>
+            </div>
+            <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-[21] mask-image-btt">
               <img
                 src={IMAGE_NIGHT}
-                alt="A moody, overhead bowl of pasta lit by a single warm light at night"
-                className="absolute inset-0 h-full w-full object-cover"
-                style={{
-                  transform: `translateY(${parallax * 0.4}px) scale(1.08)`,
-                }}
+                alt=""
+                aria-hidden="true"
+                width="1800"
+                height="1200"
+                loading="eager"
+                fetchPriority="low"
+                decoding="async"
+                className="w-full h-full object-cover object-center opacity-60 mix-blend-luminosity scale-[1.02]"
               />
-              <div className="absolute inset-0 bg-linear-to-t from-[#0E1E14] via-[#0E1E14]/30 to-black/10" />
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    'radial-gradient(320px circle at var(--x, 70%) var(--y, 30%), rgba(255,255,255,0.10), transparent 70%)',
-                }}
-              />
-              <div className="absolute inset-0 z-10 flex flex-col items-end justify-end p-8 sm:p-12 lg:p-16 text-right">
-                <span
-                  className="text-sm font-semibold text-[#CBB79A] mb-3"
-                  style={{
-                    animation: loaded ? `kaloraRise 0.8s ${EASE} both` : 'none',
-                    animationDelay: '0.8s',
-                    opacity: loaded ? undefined : 0,
-                  }}
-                >
-                  Midnight
-                </span>
-                <h1
-                  className="font-fraunces text-4xl sm:text-5xl lg:text-6xl xl:text-[4rem] leading-[1.02] font-black text-[#FAF8F2] max-w-md ml-auto"
-                  style={{
-                    animation: loaded ? `kaloraRise 0.9s ${EASE} both` : 'none',
-                    animationDelay: '1s',
-                    opacity: loaded ? undefined : 0,
-                  }}
-                >
-                  At midnight, it&rsquo;s metabolic debt.
-                </h1>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="relative z-20 -mt-14 sm:-mt-20 flex justify-center px-6"
-            style={{
-              animation: loaded ? `kaloraRise 0.9s ${EASE} both` : 'none',
-              animationDelay: '1.1s',
-              opacity: loaded ? undefined : 0,
-            }}
-          >
-            <div className="w-full max-w-xs rounded-[2rem] border border-white/70 bg-white/90 backdrop-blur-md shadow-[0_25px_60px_rgba(20,48,31,0.18)] p-6 sm:p-8">
-              <div className="relative w-full aspect-square">
-                <div className="absolute inset-0 rounded-full border border-dashed border-[#7CA655]/40 animate-[spin_140s_linear_infinite]" />
-                <div className="absolute inset-5 rounded-full border-2 border-[#DEEAD3]" />
-                <div className="absolute inset-5 rounded-full border-2 border-transparent border-t-[#7CA655] border-r-[#7CA655] rotate-45" />
-                <div className="absolute inset-10 rounded-full border border-[#16301F]/15" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-[38%] h-[38%] rounded-full bg-linear-to-br from-[#9C6644] to-[#5A3620] shadow-[inset_0_-8px_16px_rgba(0,0,0,0.35),0_12px_28px_rgba(90,54,32,0.35)] flex items-center justify-center">
-                    <div className="text-white text-center leading-tight">
-                      <span className="block text-lg sm:text-xl font-bold">
-                        Now
-                      </span>
-                      <span className="block text-[9px] font-medium opacity-80 mt-0.5">
-                        optimal window
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full text-xs font-semibold text-[#4F6B3A] shadow-sm border border-[#DEEAD3] whitespace-nowrap">
-                  12:00 PM &middot; fuel
-                </div>
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#16301F] px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm whitespace-nowrap">
-                  12:00 AM &middot; debt
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="max-w-xl mx-auto text-center px-6 pt-10 pb-16 sm:pt-14 sm:pb-20"
-            style={{
-              animation: loaded ? `kaloraRise 0.9s ${EASE} both` : 'none',
-              animationDelay: '1.25s',
-              opacity: loaded ? undefined : 0,
-            }}
-          >
-            <p className="text-base sm:text-lg text-[#5B5B50] leading-relaxed mb-10">
-              Stop counting what you eat. Start feeling{' '}
-              <em className="not-italic font-semibold text-[#16301F]">when</em>{' '}
-              you eat. Kalora lines your meals up with your body&rsquo;s own
-              circadian rhythm.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-              <a
-                href="/register"
-                onMouseEnter={activateCursor}
-                onMouseMove={onMagnetMove}
-                onMouseLeave={onMagnetLeave}
-                className="w-full sm:w-auto text-center bg-[#16301F] text-white px-10 py-4 rounded-full text-base font-bold hover:bg-[#1E4530] hover:shadow-[0_12px_30px_rgba(20,48,39,0.3)]"
-                style={{
-                  transition: `transform 300ms ${EASE}, background-color 250ms ${EASE}, box-shadow 250ms ${EASE}`,
-                }}
-              >
-                Start your journey
-              </a>
-              <a
-                href="#features"
-                onMouseEnter={activateCursor}
-                onMouseLeave={deactivateCursor}
-                className="w-full sm:w-auto text-center bg-white border-2 border-[#DEEAD3] text-[#16301F] px-10 py-4 rounded-full text-base font-bold hover:border-[#7CA655] hover:bg-[#F0F6EB] transition-colors duration-300"
-              >
-                See how it works
-              </a>
+              <div className="absolute inset-0 bg-linear-to-t from-[#070E0A] via-transparent to-transparent" />
             </div>
           </div>
         </section>
 
-        {/* ---------- MARQUEE (edges feathered with a mask) ---------- */}
         <div
-          className="relative py-5 overflow-hidden"
-          style={{
-            maskImage:
-              'linear-gradient(to right, transparent, black 12%, black 88%, transparent)',
-            borderTop: `1px solid ${theme.border}`,
-            borderBottom: `1px solid ${theme.border}`,
-            transition: 'border-color 250ms linear',
-          }}
+          aria-hidden="true"
+          className="relative py-8 sm:py-10 overflow-hidden bg-[#7CA655] text-[#070E0A] rotate-[-1.5deg] scale-105 my-24 interactive"
         >
-          <div
-            className="flex whitespace-nowrap"
-            style={{ animation: 'kaloraMarquee 30s linear infinite' }}
-          >
-            {[0, 1].map((rep) => (
+          <div className="flex whitespace-nowrap animate-[kaloraMarquee_25s_linear_infinite]">
+            {[0, 1, 2].map((rep) => (
               <div key={rep} className="flex items-center shrink-0">
                 {MARQUEE_WORDS.map((w, i) => (
-                  <span
-                    key={`${rep}-${w}`}
-                    className={`font-fraunces text-2xl sm:text-3xl mx-10 ${
-                      i % 2 === 0 ? 'italic' : 'text-[#7CA655]/80'
-                    }`}
-                    style={
-                      i % 2 === 0
-                        ? {
-                            color: theme.text,
-                            opacity: 0.7,
-                            transition: 'color 250ms linear',
-                          }
-                        : undefined
-                    }
-                  >
-                    {w}
-                  </span>
+                  <React.Fragment key={`${rep}-${w}`}>
+                    <span
+                      className={`font-fraunces text-4xl md:text-6xl mx-8 uppercase font-black tracking-tighter ${i % 2 !== 0 ? 'italic font-light' : ''}`}
+                    >
+                      {w}
+                    </span>
+                    <span className="font-mono text-xl mx-8 opacity-40">✦</span>
+                  </React.Fragment>
                 ))}
               </div>
             ))}
           </div>
         </div>
 
-        {/* ---------- BIG NUMERAL ---------- */}
-        <section className="relative py-20 md:py-32 px-6 text-center overflow-hidden">
-          <BigNumeral to={24} color={theme.ghost} />
-          <Reveal className="relative -mt-8 sm:-mt-14 md:-mt-20">
-            <p
-              className="font-fraunces text-2xl sm:text-3xl md:text-4xl font-medium max-w-2xl mx-auto leading-snug"
-              style={{ color: theme.text, transition: 'color 250ms linear' }}
-            >
-              Every hour of the day changes what a calorie means to your body.
-            </p>
-          </Reveal>
-        </section>
-
-        {/* ---------- CAPABILITIES (sticky scroll, choreographed to scroll position) ---------- */}
         <section
           id="features"
-          className="max-w-6xl mx-auto px-6 sm:px-8 py-8 md:py-16"
+          aria-labelledby="features-heading"
+          className="max-w-[90rem] mx-auto px-6 lg:px-12 py-16 md:py-32"
         >
-          <div className="md:grid md:grid-cols-2 md:gap-16">
-            <div className="hidden md:block sticky top-28 h-[420px] rounded-[2rem] overflow-hidden bg-[#0F2216]">
+          <div className="md:grid md:grid-cols-12 md:gap-16 items-start">
+            <div className="hidden md:block md:col-span-6 lg:col-span-7 sticky top-32 h-[500px] rounded-[3rem] overflow-hidden bg-[#070E0A] border border-white/5 shadow-2xl">
               {CAPABILITIES.map((c, i) => (
                 <div
                   key={c.title}
-                  className="absolute inset-0 flex items-center justify-center p-10"
+                  className="absolute inset-0 flex items-center justify-center p-12"
                   style={{
-                    opacity: active === i ? 1 : 0,
-                    transform: active === i ? 'scale(1)' : 'scale(0.96)',
-                    transition: `opacity 600ms ${EASE}, transform 600ms ${EASE}`,
+                    opacity: activeCap === i ? 1 : 0,
+                    transform: activeCap === i ? 'scale(1)' : 'scale(0.92)',
+                    transition: `all 800ms ${EASE}`,
                   }}
                 >
-                  {c.render(active === i)}
+                  {c.render(activeCap === i)}
                 </div>
               ))}
             </div>
 
-            <div className="space-y-16 md:space-y-[46vh] py-2 md:py-10">
+            <div className="md:col-span-6 lg:col-span-5 space-y-24 md:space-y-[60vh] py-10 md:py-32 relative z-10">
               {CAPABILITIES.map((c, i) => (
                 <div
                   key={c.title}
                   ref={(el) => (itemRefs.current[i] = el)}
-                  className="max-w-md"
+                  className="max-w-lg interactive"
                 >
-                  <div className="md:hidden mb-6 rounded-2xl overflow-hidden bg-[#0F2216] p-8 flex items-center justify-center">
+                  <div className="md:hidden mb-8 rounded-[2rem] overflow-hidden bg-[#070E0A] border border-white/5 p-8 flex items-center justify-center h-[260px] sm:h-[320px]">
                     {c.render(true)}
                   </div>
-                  <h3
-                    className="font-fraunces text-2xl sm:text-3xl font-bold mb-3"
+                  <span
+                    className="font-mono text-[10px] tracking-[0.3em] uppercase mb-4 block"
                     style={{
-                      color: active === i ? theme.text : theme.muted,
+                      color: activeCap === i ? '#7CA655' : theme.muted,
+                      transition: `color 500ms ${EASE}`,
+                    }}
+                  >
+                    0{i + 1} &mdash; Core Feature
+                  </span>
+                  <h3
+                    className="font-fraunces text-4xl sm:text-5xl font-black mb-6 tracking-tight leading-[1.1]"
+                    style={{
+                      color: activeCap === i ? theme.text : theme.muted,
                       transition: `color 500ms ${EASE}`,
                     }}
                   >
                     {c.title}
                   </h3>
                   <p
-                    className="text-base sm:text-lg leading-relaxed"
+                    className="text-lg md:text-xl leading-relaxed"
                     style={{
-                      color: theme.muted,
-                      transition: 'color 250ms linear',
+                      color: activeCap === i ? theme.muted : 'transparent',
+                      transition: `color 500ms ${EASE}`,
                     }}
                   >
                     {c.body}
@@ -683,204 +708,223 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* ---------- PRODUCT DETAIL (bento) ---------- */}
+        <BigNumeral to={24} />
+
         <section
           id="bento-details"
-          className="max-w-6xl mx-auto px-6 sm:px-8 mt-8 md:mt-16"
+          aria-labelledby="bento-heading"
+          className="max-w-[90rem] mx-auto px-6 lg:px-12 py-20 md:py-32"
         >
-          <Reveal className="text-center mb-14">
+          <div className="text-center mb-20 max-w-3xl mx-auto interactive">
             <h2
-              className="font-fraunces text-3xl sm:text-4xl md:text-5xl font-black mb-4 max-w-2xl mx-auto"
+              id="features-heading"
+              className="font-fraunces text-4xl sm:text-5xl md:text-6xl font-black mb-6 tracking-tight leading-[1.05]"
               style={{ color: theme.text, transition: 'color 250ms linear' }}
             >
-              Built for people who already notice the clock.
+              Built for people who notice the clock.
             </h2>
             <p
-              className="text-base md:text-lg"
+              className="text-lg md:text-xl font-mono tracking-tight"
               style={{ color: theme.muted, transition: 'color 250ms linear' }}
             >
-              An interface that rewards your body&rsquo;s own sense of timing.
+              An interface that rewards your body’s biological sense of timing.
             </p>
-          </Reveal>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[300px]">
-            <Reveal
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-[340px]">
+            <BentoCard
               delay={0}
-              className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#DEEAD3] hover:shadow-[0_20px_45px_rgba(20,48,31,0.08)] transition-shadow duration-300 min-h-70 md:min-h-0 flex flex-col justify-between"
+              className="md:col-span-7 bg-[#16301F] text-white interactive"
             >
-              <div>
-                <h3 className="text-xl md:text-2xl font-bold mb-2 text-[#16301F]">
-                  The Cadence Map
-                </h3>
-                <p className="text-[#5B5B50] text-sm md:text-base max-w-sm">
-                  Watch your daily decisions build a tapestry. We plot your
-                  meals against your circadian rhythm curve.
-                </p>
-              </div>
-              <div className="w-full h-24 mt-6 bg-[#FAF8F2] rounded-xl border border-[#EFE9DD] flex items-end px-4 pb-4 space-x-2">
-                <div className="w-1/6 bg-[#DEEAD3] h-1/3 rounded-t-md" />
-                <div className="w-1/6 bg-[#7CA655] h-full rounded-t-md relative">
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full ring-2 ring-[#7CA655]" />
-                </div>
-                <div className="w-1/6 bg-[#B8CC93] h-2/3 rounded-t-md" />
-                <div className="w-1/6 bg-[#7C4A30]/35 h-1/4 rounded-t-md" />
-                <div className="w-1/6 bg-[#7C4A30]/75 h-1/6 rounded-t-md" />
-                <div className="w-1/6 bg-[#DEEAD3] h-1/2 rounded-t-md" />
-              </div>
-            </Reveal>
-
-            <Reveal
-              delay={80}
-              className="bg-[#16301F] text-white rounded-3xl p-6 md:p-8 min-h-62.5 md:min-h-0 flex flex-col justify-between"
-            >
-              <div className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center mb-6 text-lg">
-                ⚡
-              </div>
-              <div>
-                <h3 className="text-xl md:text-2xl font-bold mb-2">
-                  Gentle Nudges
-                </h3>
-                <p className="text-[#C7D6BE] text-sm leading-relaxed">
-                  Eat late? Kalora doesn&rsquo;t judge. It quietly recalibrates
-                  your next window to pull you back into alignment.
-                </p>
-              </div>
-            </Reveal>
-
-            <Reveal
-              delay={160}
-              className="bg-[#F0F6EB] rounded-3xl p-6 md:p-8 border border-[#DEEAD3] flex flex-col justify-center items-center text-center min-h-62.5 md:min-h-0"
-            >
-              <div className="w-12 h-12 bg-white rounded-full shadow-sm flex items-center justify-center mb-4">
-                <svg
-                  className="w-5 h-5 text-[#7CA655]"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-[#16301F]">
-                One-Tap Logging
-              </h3>
-              <p className="text-[#5B5B50] text-sm px-2">
-                No barcode scanning. Just tap when you eat — we calculate the
-                biological impact.
-              </p>
-            </Reveal>
-
-            <Reveal
-              delay={240}
-              className="md:col-span-2 bg-white rounded-3xl p-6 md:p-8 border border-[#DEEAD3] flex flex-col justify-center min-h-70 md:min-h-0"
-            >
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                <div className="max-w-md text-center sm:text-left">
-                  <h3 className="text-xl md:text-2xl font-bold mb-2 text-[#16301F]">
-                    Metabolic Debt Rescue
+              <div className="flex flex-col h-full justify-between p-4">
+                <div>
+                  <h3 className="font-fraunces text-3xl font-bold mb-3">
+                    The Cadence Map
                   </h3>
-                  <p className="text-[#5B5B50] text-sm md:text-base">
-                    Understand the true cost of the midnight snack. See exactly
-                    how many hours of fasting it takes to clear your metabolic
-                    debt.
+                  <p className="text-[#9CA79B] text-sm md:text-base max-w-md">
+                    Watch your daily decisions build a tapestry. We plot your
+                    meals against your circadian rhythm curve.
                   </p>
                 </div>
-                <DebtRing />
+
+                <div className="w-full h-32 mt-8 bg-[#0B140E] rounded-2xl border border-white/5 flex items-end px-4 pb-4 space-x-3 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-linear-to-t from-[#7CA655]/20 to-transparent opacity-50" />
+                  {[3, 6, 9, 4, 2, 7].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 bg-white/10 hover:bg-[#7CA655] transition-colors rounded-t-lg relative group"
+                      style={{ height: `${h * 10}%` }}
+                    >
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 font-mono text-[9px] bg-white text-black px-2 py-1 rounded transition-opacity">
+                        {h * 10}%
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </Reveal>
+            </BentoCard>
+
+            <BentoCard
+              delay={100}
+              className="md:col-span-5 bg-[#7CA655] text-[#16301F] interactive"
+            >
+              <div className="flex flex-col h-full justify-between p-4">
+                <div className="w-14 h-14 rounded-2xl bg-white/30 backdrop-blur-md flex items-center justify-center mb-6 shadow-xl">
+                  <svg
+                    className="w-6 h-6 text-[#16301F]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-fraunces text-3xl font-bold mb-3">
+                    One-Tap Logging
+                  </h3>
+                  <p className="text-[#16301F]/80 text-sm md:text-base font-medium">
+                    No barcode scanning. Just tap when you eat — we calculate
+                    the biological impact instantly.
+                  </p>
+                </div>
+              </div>
+            </BentoCard>
+
+            <BentoCard
+              delay={200}
+              className="md:col-span-5 bg-[#FAF8F2] border border-[#DEEAD3] text-[#16301F] interactive"
+            >
+              <div className="flex flex-col items-center justify-center h-full text-center p-4">
+                <DebtRing />
+                <h3 className="font-fraunces text-2xl font-bold mt-8 mb-2">
+                  Debt Rescue
+                </h3>
+                <p className="text-[#5B5B50] text-sm">
+                  See exactly how many hours of fasting clear your late-night
+                  metabolic debt.
+                </p>
+              </div>
+            </BentoCard>
+
+            <BentoCard
+              delay={300}
+              className="md:col-span-7 bg-[#070E0A] border border-white/10 text-white interactive"
+            >
+              <div className="flex flex-col h-full justify-center p-4">
+                <span className="font-mono text-xs tracking-widest text-[#B8CC93] mb-4 uppercase">
+                  Algorithmic Compassion
+                </span>
+                <h3 className="font-fraunces text-4xl md:text-5xl font-black mb-4 leading-tight">
+                  Gentle Nudges.
+                </h3>
+                <p className="text-[#9CA79B] text-lg max-w-lg">
+                  Eat late? Kalora doesn’t judge. It quietly recalibrates your
+                  next window to pull you back into alignment without the
+                  lecture.
+                </p>
+              </div>
+            </BentoCard>
           </div>
         </section>
 
-        {/* ---------- CLOSING BAND ---------- */}
-        <section className="relative mt-24 md:mt-32">
-          <div
-            className="relative min-h-[46vh] flex items-center justify-center overflow-hidden"
-            onMouseMove={onSpotMove}
-          >
+        <section className="relative mt-24 md:mt-40">
+          <div className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
             <img
               src={IMAGE_NIGHT_WIDE}
-              alt="A quiet, dimly lit table set for a late dinner"
+              alt="Quiet dinner table in warm evening light"
+              width="2200"
+              height="1400"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 h-full w-full object-cover object-[center_30%]"
             />
-            <div className="absolute inset-0 bg-[#0E1E14]/78" />
-            <div
-              className="pointer-events-none absolute inset-0"
-              style={{
-                background:
-                  'radial-gradient(360px circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.08), transparent 70%)',
-              }}
-            />
-            <Reveal className="relative z-10 text-center px-6 max-w-xl mx-auto py-24">
-              <h2 className="font-fraunces text-3xl sm:text-4xl font-black text-[#FAF8F2] mb-8 leading-tight">
+            <div className="absolute inset-0 bg-[#070E0A]/85 backdrop-blur-[2px]" />
+
+            <div className="relative z-10 text-center px-6 max-w-3xl mx-auto py-32 interactive">
+              <h2 className="font-fraunces text-[clamp(2.75rem,7vw,5.5rem)] font-black text-[#FAF8F2] mb-8 sm:mb-10 leading-[0.95] tracking-[-0.04em]">
                 Your next window opens tomorrow at sunrise.
               </h2>
               <a
                 href="/register"
-                onMouseEnter={activateCursor}
-                onMouseMove={onMagnetMove}
-                onMouseLeave={onMagnetLeave}
-                className="inline-block bg-[#FAF8F2] text-[#16301F] px-10 py-4 rounded-full text-base font-bold hover:bg-white"
-                style={{
-                  transition: `transform 300ms ${EASE}, background-color 250ms ${EASE}`,
-                }}
+                className="inline-flex items-center justify-center bg-[#FAF8F2] text-[#16301F] px-8 sm:px-12 py-4 sm:py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-[#7CA655] hover:text-white transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAF8F2] shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(124,166,85,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4 focus-visible:ring-offset-[#070E0A]"
               >
-                Start your journey
+                Start Your Journey
               </a>
-            </Reveal>
+            </div>
           </div>
         </section>
       </main>
 
       <footer
-        className="py-12 relative z-10"
+        className="py-16 relative z-10 border-t"
         style={{
           backgroundColor: theme.bg,
-          borderTop: `1px solid ${theme.border}`,
+          borderColor: theme.border,
           transition:
-            'background-color 250ms linear, border-color 250ms linear',
+            'background-color 400ms linear, border-color 400ms linear',
         }}
       >
-        <div className="max-w-6xl mx-auto px-6 sm:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-6">
+        <div className="max-w-[90rem] mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-8">
           <div>
-            <div className="flex items-center justify-center md:justify-start space-x-2 mb-2">
+            <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
               <img
                 src={logoImage}
-                alt="Kalora"
-                className="h-6 w-auto grayscale opacity-60"
+                alt=""
+                aria-hidden="true"
+                height="28"
+                loading="lazy"
+                decoding="async"
+                className="h-7 w-auto grayscale opacity-80"
               />
               <img
                 src={logoText}
                 alt="Kalora"
-                className="h-4 w-auto grayscale opacity-60"
+                height="16"
+                loading="lazy"
+                decoding="async"
+                className="h-4 w-auto grayscale opacity-80"
               />
             </div>
             <p
-              className="text-sm font-medium"
-              style={{ color: theme.muted, transition: 'color 250ms linear' }}
+              className="text-xs font-mono tracking-widest uppercase"
+              style={{ color: theme.muted, transition: 'color 400ms linear' }}
             >
               &copy; {new Date().getFullYear()} Kalora. Aligning nature and
               nutrition.
             </p>
           </div>
           <div
-            className="flex flex-wrap justify-center md:justify-end gap-x-8 gap-y-3 text-sm font-bold"
-            style={{ color: theme.muted, transition: 'color 250ms linear' }}
+            className="flex flex-wrap justify-center md:justify-end gap-x-10 gap-y-4 text-xs font-mono tracking-widest uppercase"
+            style={{ color: theme.text, transition: 'color 400ms linear' }}
           >
-            <a href="#" className="hover:text-[#7CA655] transition-colors">
+            <a
+              href="#"
+              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
+            >
               The Philosophy
             </a>
-            <a href="#" className="hover:text-[#7CA655] transition-colors">
+            <a
+              href="#"
+              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
+            >
               Science
             </a>
-            <a href="#" className="hover:text-[#7CA655] transition-colors">
+            <a
+              href="#"
+              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
+            >
               Support
             </a>
-            <a href="#" className="hover:text-[#7CA655] transition-colors">
+            <a
+              href="#"
+              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
+            >
               Privacy
             </a>
           </div>

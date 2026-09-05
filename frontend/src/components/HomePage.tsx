@@ -3,10 +3,11 @@ import Navbar from './Navbar'
 import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
 const IMAGE_DAY =
-  'https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?q=80&w=1800&auto=format&fit=crop'
-const IMAGE_NIGHT = IMAGE_DAY
+  'https://images.unsplash.com/photo-1732534252987-b37494a42c3a?q=80&w=1800&auto=format&fit=crop'
+const IMAGE_NIGHT =
+  'https://images.unsplash.com/photo-1606659894125-40824878b6ce?q=80&w=1800&auto=format&fit=crop'
 const IMAGE_NIGHT_WIDE =
-  'https://images.unsplash.com/photo-1560434019-4558f9a9e2a1?q=80&w=1800&auto=format&fit=crop'
+  'https://images.unsplash.com/photo-1758405155772-ef0f0077375c?q=80&w=2200&auto=format&fit=crop'
 const GRAIN =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"
 const EASE = 'cubic-bezier(.22,1,.36,1)'
@@ -21,6 +22,13 @@ function mix(hexA: string, hexB: string, t: number) {
   const g = Math.round(a[1] + (b[1] - a[1]) * t)
   const bch = Math.round(a[2] + (b[2] - a[2]) * t)
   return `rgb(${r}, ${g}, ${bch})`
+}
+
+function prefersReducedMotion() {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 }
 
 const MARQUEE_WORDS = [
@@ -193,6 +201,10 @@ function useCountUp(active: boolean, duration = 1200) {
   const [t, setT] = useState(0)
   useEffect(() => {
     if (!active) return undefined
+    if (prefersReducedMotion()) {
+      setT(1)
+      return undefined
+    }
     let raf: number
     let start: number | null = null
     const step = (ts: number) => {
@@ -254,6 +266,7 @@ function BigNumeral({ to = 24 }: { to?: number }) {
   return (
     <div
       ref={ref}
+      aria-hidden="true"
       className="relative flex justify-center items-center w-full overflow-hidden py-16 md:py-28 bg-[#070E0A]"
     >
       <span
@@ -269,7 +282,7 @@ function BigNumeral({ to = 24 }: { to?: number }) {
         {Math.round(t * to)}
       </span>
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <span className="font-mono text-xs md:text-sm tracking-[0.4em] uppercase text-white/70 bg-[#070E0A] px-8 py-3 rounded-full border border-white/10 backdrop-blur-xl shadow-2xl">
+        <span className="font-mono text-xs md:text-sm tracking-wide text-white/70">
           Hours in a metabolic cycle
         </span>
       </div>
@@ -319,7 +332,7 @@ function DebtRing() {
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
+  const [progress, setProgress] = useState(0)
   const [activeCap, setActiveCap] = useState(0)
 
   const cursorDotRef = useRef<HTMLDivElement>(null)
@@ -327,20 +340,64 @@ const HomePage = () => {
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
-    document.title = 'Kalora'
-
+    const title = "Kalora | Nutrition timed to your body's clock"
     const description =
       'Kalora connects what you eat with when you eat it, helping you build nutrition habits around your natural biological rhythm.'
+    const url = window.location.href
 
-    let meta = document.querySelector('meta[name="description"]')
+    document.title = title
 
-    if (!meta) {
-      meta = document.createElement('meta')
-      meta.setAttribute('name', 'description')
-      document.head.appendChild(meta)
+    const upsertMeta = (
+      attr: 'name' | 'property',
+      key: string,
+      content: string,
+    ) => {
+      let tag = document.querySelector(`meta[${attr}="${key}"]`)
+      if (!tag) {
+        tag = document.createElement('meta')
+        tag.setAttribute(attr, key)
+        document.head.appendChild(tag)
+      }
+      tag.setAttribute('content', content)
     }
 
-    meta.setAttribute('content', description)
+    upsertMeta('name', 'description', description)
+    upsertMeta('name', 'theme-color', '#16301F')
+    upsertMeta('property', 'og:title', title)
+    upsertMeta('property', 'og:description', description)
+    upsertMeta('property', 'og:type', 'website')
+    upsertMeta('property', 'og:url', url)
+    upsertMeta('property', 'og:image', IMAGE_DAY)
+    upsertMeta('property', 'og:site_name', 'Kalora')
+    upsertMeta('name', 'twitter:card', 'summary_large_image')
+    upsertMeta('name', 'twitter:title', title)
+    upsertMeta('name', 'twitter:description', description)
+    upsertMeta('name', 'twitter:image', IMAGE_DAY)
+
+    let canonical = document.querySelector('link[rel="canonical"]')
+    if (!canonical) {
+      canonical = document.createElement('link')
+      canonical.setAttribute('rel', 'canonical')
+      document.head.appendChild(canonical)
+    }
+    canonical.setAttribute('href', url)
+
+    let structuredData = document.getElementById('kalora-structured-data')
+    if (!structuredData) {
+      structuredData = document.createElement('script')
+      structuredData.id = 'kalora-structured-data'
+      structuredData.setAttribute('type', 'application/ld+json')
+      document.head.appendChild(structuredData)
+    }
+    structuredData.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebApplication',
+      name: 'Kalora',
+      description,
+      applicationCategory: 'HealthApplication',
+      operatingSystem: 'Web',
+      url,
+    })
   }, [])
 
   useEffect(() => {
@@ -348,6 +405,13 @@ const HomePage = () => {
     return () => clearTimeout(t)
   }, [])
   useEffect(() => {
+    if (
+      prefersReducedMotion() ||
+      !window.matchMedia('(pointer: fine)').matches
+    ) {
+      return undefined
+    }
+
     let mouseX = -100
     let mouseY = -100
     let cursorX = -100
@@ -422,7 +486,12 @@ const HomePage = () => {
         const now = performance.now()
 
         if (now - lastUpdate >= 40) {
-          setScrollY(window.scrollY)
+          const docHeight =
+            document.documentElement.scrollHeight -
+            document.documentElement.clientHeight
+          setProgress(
+            docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0,
+          )
           lastUpdate = now
         }
 
@@ -448,13 +517,19 @@ const HomePage = () => {
     return () => observers.forEach((io) => io && io.disconnect())
   }, [])
 
-  const docHeight =
-    typeof document !== 'undefined'
-      ? document.documentElement.scrollHeight -
-        document.documentElement.clientHeight
-      : 0
-  const progress = docHeight > 0 ? Math.min(scrollY / docHeight, 1) : 0
   const dark = Math.min(progress * 1.5, 1)
+
+  const magneticMove = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (prefersReducedMotion()) return
+    const rect = event.currentTarget.getBoundingClientRect()
+    const x = event.clientX - rect.left - rect.width / 2
+    const y = event.clientY - rect.top - rect.height / 2
+    event.currentTarget.style.transform = `translate(${x / 6}px, ${y / 6}px)`
+  }
+
+  const magneticLeave = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.currentTarget.style.transform = 'translate(0px, 0px)'
+  }
 
   const theme = {
     bg: mix('#FAF8F2', '#070E0A', dark),
@@ -488,6 +563,13 @@ const HomePage = () => {
         }
       `}</style>
 
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-2000 focus:rounded focus:bg-[#16301F] focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-white focus:outline-none focus:ring-2 focus:ring-[#7CA655]"
+      >
+        Skip to main content
+      </a>
+
       <div
         aria-hidden="true"
         className="fixed inset-0 z-1000 flex items-center justify-center bg-[#070E0A]"
@@ -518,18 +600,11 @@ const HomePage = () => {
       <main id="main-content" className="relative z-10 w-full">
         <section
           ref={heroRef}
+          aria-labelledby="hero-heading"
           className="relative w-full h-screen overflow-hidden bg-[#FAF8F2] interactive"
         >
           <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-6 md:px-16 lg:px-24 z-10">
             <div className="max-w-4xl mt-12 md:mt-0">
-              <div className="overflow-hidden mb-6">
-                <span
-                  className="block font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#7CA655] animate-[kaloraRise_1s_ease-out_both]"
-                  style={{ animationDelay: '1s' }}
-                >
-                  12:00 PM &middot; Circadian Peak
-                </span>
-              </div>
               <h1
                 id="hero-heading"
                 className="font-fraunces text-[clamp(3.5rem,12vw,11rem)] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] leading-[0.85] font-black text-[#16301F] tracking-tight"
@@ -539,7 +614,7 @@ const HomePage = () => {
                     className="block animate-[kaloraRise_1.2s_cubic-bezier(.22,1,.36,1)_both]"
                     style={{ animationDelay: '1.1s' }}
                   >
-                    Noon is
+                    Pasta at noon
                   </span>
                 </span>
                 <span className="block overflow-hidden">
@@ -547,6 +622,7 @@ const HomePage = () => {
                     className="block animate-[kaloraRise_1.2s_cubic-bezier(.22,1,.36,1)_both]"
                     style={{ animationDelay: '1.2s' }}
                   >
+                    is{' '}
                     <em className="italic font-light pr-4 text-[#7CA655]">
                       pure
                     </em>{' '}
@@ -558,8 +634,14 @@ const HomePage = () => {
                 className="mt-8 text-base md:text-lg text-[#5B5B50] max-w-sm animate-[kaloraRise_1s_ease-out_both]"
                 style={{ animationDelay: '1.3s' }}
               >
-                A bowl of pasta at noon is pure energy, burned cleanly by a
-                waking metabolism.
+                Burned cleanly by a metabolism that&rsquo;s wide awake and ready
+                to use it.
+              </p>
+              <p className="sr-only">
+                Pasta at noon is burned as fuel by an active metabolism. The
+                same pasta at midnight is stored instead, becoming a metabolic
+                debt your body has to pay off the next day. Kalora times your
+                nutrition to this rhythm instead of only counting calories.
               </p>
             </div>
             <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-[-1] mask-image-btt">
@@ -586,22 +668,22 @@ const HomePage = () => {
             }}
           >
             <div className="max-w-4xl relative z-30 mt-12 md:mt-0">
-              <span className="block font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-[#B8CC93] mb-6">
-                12:00 AM &middot; Rest State
-              </span>
               <h2
                 aria-hidden="true"
                 className="font-fraunces text-[clamp(3.5rem,12vw,11rem)] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] leading-[0.85] font-black text-[#FAF8F2] tracking-tight"
               >
-                <span className="block pb-2">Midnight</span>
+                <span className="block pb-2">Pasta at midnight</span>
                 <span className="block">
-                  <em className="italic font-light text-[#4B7A45] pr-4">is</em>{' '}
+                  is{' '}
+                  <em className="italic font-light text-[#4B7A45] pr-4">
+                    metabolic
+                  </em>{' '}
                   debt.
                 </span>
               </h2>
               <p className="mt-8 text-base md:text-lg text-[#9CA79B] max-w-sm">
-                At midnight, that same bowl becomes a metabolic loan your body
-                is forced to pay off tomorrow.
+                Stored instead, becoming a loan your body has to pay off
+                tomorrow.
               </p>
             </div>
             <div className="absolute right-0 bottom-0 w-[85%] md:w-[55%] lg:w-[45%] h-full md:h-[90%] z-21 mask-image-btt">
@@ -635,7 +717,7 @@ const HomePage = () => {
                     >
                       {w}
                     </span>
-                    <span className="font-mono text-xl mx-8 opacity-40">✦</span>
+                    <span className="font-mono text-xl mx-8 opacity-40">•</span>
                   </React.Fragment>
                 ))}
               </div>
@@ -645,11 +727,17 @@ const HomePage = () => {
 
         <section
           id="features"
-          aria-labelledby="features-heading"
+          aria-labelledby="capabilities-heading"
           className="max-w-360 mx-auto px-6 lg:px-12 py-16 md:py-32"
         >
+          <h2 id="capabilities-heading" className="sr-only">
+            Core capabilities
+          </h2>
           <div className="md:grid md:grid-cols-12 md:gap-16 items-start">
-            <div className="hidden md:block md:col-span-6 lg:col-span-7 sticky top-32 h-125 rounded-[3rem] overflow-hidden bg-[#070E0A] border border-white/5 shadow-2xl">
+            <div
+              aria-hidden="true"
+              className="hidden md:block md:col-span-6 lg:col-span-7 sticky top-32 h-125 rounded-[3rem] overflow-hidden bg-[#070E0A] border border-white/5 shadow-2xl"
+            >
               {CAPABILITIES.map((c, i) => (
                 <div
                   key={c.title}
@@ -672,7 +760,10 @@ const HomePage = () => {
                   ref={(el) => (itemRefs.current[i] = el)}
                   className="max-w-lg interactive"
                 >
-                  <div className="md:hidden mb-8 rounded-[2rem] overflow-hidden bg-[#070E0A] border border-white/5 p-8 flex items-center justify-center h-65 sm:h-80">
+                  <div
+                    aria-hidden="true"
+                    className="md:hidden mb-8 rounded-[2rem] overflow-hidden bg-[#070E0A] border border-white/5 p-8 flex items-center justify-center h-65 sm:h-80"
+                  >
                     {c.render(true)}
                   </div>
                   <span
@@ -682,7 +773,7 @@ const HomePage = () => {
                       transition: `color 500ms ${EASE}`,
                     }}
                   >
-                    0{i + 1} &mdash; Core Feature
+                    0{i + 1}
                   </span>
                   <h3
                     className="font-fraunces text-4xl sm:text-5xl font-black mb-6 tracking-tight leading-[1.1]"
@@ -712,7 +803,7 @@ const HomePage = () => {
 
         <section
           id="bento-details"
-          aria-labelledby="bento-heading"
+          aria-labelledby="features-heading"
           className="max-w-360 mx-auto px-6 lg:px-12 py-20 md:py-32"
         >
           <div className="text-center mb-20 max-w-3xl mx-auto interactive">
@@ -747,7 +838,10 @@ const HomePage = () => {
                   </p>
                 </div>
 
-                <div className="w-full h-32 mt-8 bg-[#0B140E] rounded-2xl border border-white/5 flex items-end px-4 pb-4 space-x-3 relative overflow-hidden">
+                <div
+                  aria-hidden="true"
+                  className="w-full h-32 mt-8 bg-[#0B140E] rounded-2xl border border-white/5 flex items-end px-4 pb-4 space-x-3 relative overflow-hidden"
+                >
                   <div className="absolute inset-0 bg-linear-to-t from-[#7CA655]/20 to-transparent opacity-50" />
                   {[3, 6, 9, 4, 2, 7].map((h, i) => (
                     <div
@@ -789,8 +883,8 @@ const HomePage = () => {
                     One-Tap Logging
                   </h3>
                   <p className="text-[#16301F]/80 text-sm md:text-base font-medium">
-                    No barcode scanning. Just tap when you eat — we calculate
-                    the biological impact instantly.
+                    No barcode scanning. Just tap when you eat. We calculate the
+                    biological impact instantly.
                   </p>
                 </div>
               </div>
@@ -801,7 +895,9 @@ const HomePage = () => {
               className="md:col-span-5 bg-[#FAF8F2] border border-[#DEEAD3] text-[#16301F] interactive"
             >
               <div className="flex flex-col items-center justify-center h-full text-center p-4">
-                <DebtRing />
+                <div aria-hidden="true">
+                  <DebtRing />
+                </div>
                 <h3 className="font-fraunces text-2xl font-bold mt-8 mb-2">
                   Debt Rescue
                 </h3>
@@ -817,9 +913,6 @@ const HomePage = () => {
               className="md:col-span-7 bg-[#070E0A] border border-white/10 text-white interactive"
             >
               <div className="flex flex-col h-full justify-center p-4">
-                <span className="font-mono text-xs tracking-widest text-[#B8CC93] mb-4 uppercase">
-                  Algorithmic Compassion
-                </span>
                 <h3 className="font-fraunces text-4xl md:text-5xl font-black mb-4 leading-tight">
                   Gentle Nudges.
                 </h3>
@@ -852,9 +945,21 @@ const HomePage = () => {
               </h2>
               <a
                 href="/register"
-                className="inline-flex items-center justify-center bg-[#FAF8F2] text-[#16301F] px-8 sm:px-12 py-4 sm:py-5 rounded-full text-sm font-bold uppercase tracking-widest hover:bg-[#7CA655] hover:text-white transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4 focus-visible:ring-offset-[#FAF8F2] shadow-[0_0_40px_rgba(255,255,255,0.1)] hover:shadow-[0_0_60px_rgba(124,166,85,0.4)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4 focus-visible:ring-offset-[#070E0A]"
+                onMouseMove={magneticMove}
+                onMouseLeave={magneticLeave}
+                className="group relative inline-flex items-center gap-5 overflow-hidden bg-[#FAF8F2] text-[#16301F] px-8 sm:px-12 py-4 sm:py-5 text-sm font-bold uppercase tracking-widest shadow-[0_0_40px_rgba(255,255,255,0.1)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4 focus-visible:ring-offset-[#070E0A]"
+                style={{ transition: `transform 450ms ${EASE}` }}
               >
-                Start Your Journey
+                <span className="relative z-10 transition-colors duration-500 group-hover:text-white">
+                  Start Your Journey
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="relative z-10 text-lg transition-transform duration-500 group-hover:translate-x-1 group-hover:text-white"
+                >
+                  &rarr;
+                </span>
+                <span className="absolute inset-0 -translate-x-full bg-[#7CA655] transition-transform duration-700 ease-out group-hover:translate-x-0" />
               </a>
             </div>
           </div>

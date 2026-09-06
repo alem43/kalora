@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import Navbar from './Navbar'
 import logoImage from '../images/logo_image.png'
 import logoText from '../images/logo_text.png'
@@ -11,18 +12,6 @@ const IMAGE_NIGHT_WIDE =
 const GRAIN =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"
 const EASE = 'cubic-bezier(.22,1,.36,1)'
-function hexToRgb(hex: string) {
-  const n = parseInt(hex.replace('#', ''), 16)
-  return [(n >> 16) & 255, (n >> 8) & 255, n & 255]
-}
-function mix(hexA: string, hexB: string, t: number) {
-  const a = hexToRgb(hexA)
-  const b = hexToRgb(hexB)
-  const r = Math.round(a[0] + (b[0] - a[0]) * t)
-  const g = Math.round(a[1] + (b[1] - a[1]) * t)
-  const bch = Math.round(a[2] + (b[2] - a[2]) * t)
-  return `rgb(${r}, ${g}, ${bch})`
-}
 
 function prefersReducedMotion() {
   return (
@@ -45,6 +34,19 @@ const HEATMAP_LEVELS = [
 ]
 const HEATMAP_COLORS = ['#173820', '#2C5333', '#4B7A45', '#7CA655', '#B8CC93']
 const MOMENTUM_BARS = [38, 52, 68, 84, 30, 48, 62, 78, 92]
+
+const THEME_LIGHT = {
+  bg: '#FAF8F2',
+  text: '#16301F',
+  muted: '#5B5B50',
+  border: '#DEEAD3',
+}
+const THEME_DARK = {
+  bg: '#070E0A',
+  text: '#FAF8F2',
+  muted: '#9CA79B',
+  border: '#1C2920',
+}
 
 const CAPABILITIES = [
   {
@@ -273,9 +275,10 @@ function BigNumeral({ to = 24 }: { to?: number }) {
         className="font-fraunces italic font-black text-[12rem] sm:text-[18rem] md:text-[26rem] lg:text-[34rem] leading-none select-none tracking-tighter"
         style={{
           background:
-            'linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.00) 100%)',
+            'linear-gradient(180deg, rgba(250,248,242,0.34) 0%, rgba(124,166,85,0.08) 100%)',
           WebkitBackgroundClip: 'text',
           WebkitTextFillColor: 'transparent',
+          WebkitTextStroke: '1.5px rgba(250,248,242,0.14)',
           color: 'transparent',
         }}
       >
@@ -332,7 +335,7 @@ function DebtRing() {
 
 const HomePage = () => {
   const [loaded, setLoaded] = useState(false)
-  const [progress, setProgress] = useState(0)
+  const [isDark, setIsDark] = useState(false)
   const [activeCap, setActiveCap] = useState(0)
 
   const cursorDotRef = useRef<HTMLDivElement>(null)
@@ -486,11 +489,9 @@ const HomePage = () => {
         const now = performance.now()
 
         if (now - lastUpdate >= 40) {
-          const docHeight =
-            document.documentElement.scrollHeight -
-            document.documentElement.clientHeight
-          setProgress(
-            docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0,
+          const heroBottom = heroRef.current?.getBoundingClientRect().bottom
+          setIsDark(
+            heroBottom !== undefined && heroBottom < window.innerHeight * 0.35,
           )
           lastUpdate = now
         }
@@ -517,7 +518,7 @@ const HomePage = () => {
     return () => observers.forEach((io) => io && io.disconnect())
   }, [])
 
-  const dark = Math.min(progress * 1.5, 1)
+  const theme = isDark ? THEME_DARK : THEME_LIGHT
 
   const magneticMove = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (prefersReducedMotion()) return
@@ -531,20 +532,13 @@ const HomePage = () => {
     event.currentTarget.style.transform = 'translate(0px, 0px)'
   }
 
-  const theme = {
-    bg: mix('#FAF8F2', '#070E0A', dark),
-    text: mix('#16301F', '#FAF8F2', dark),
-    muted: mix('#5B5B50', '#9CA79B', dark),
-    border: mix('#DEEAD3', '#1C2920', dark),
-  }
-
   return (
     <div
-      className="kalora-home min-h-screen selection:bg-[#7CA655]/40 selection:text-[#16301F] overflow-x-hidden antialiased"
+      className="kalora-home min-h-screen selection:bg-[#7CA655]/40 selection:text-[#16301F] antialiased"
       style={{
         backgroundColor: theme.bg,
         color: theme.text,
-        transition: 'background-color 400ms linear, color 400ms linear',
+        transition: `background-color 700ms ${EASE}, color 700ms ${EASE}`,
       }}
     >
       <style>{`
@@ -971,8 +965,7 @@ const HomePage = () => {
         style={{
           backgroundColor: theme.bg,
           borderColor: theme.border,
-          transition:
-            'background-color 400ms linear, border-color 400ms linear',
+          transition: `background-color 700ms ${EASE}, border-color 700ms ${EASE}`,
         }}
       >
         <div className="max-w-[90rem] mx-auto px-6 lg:px-12 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-8">
@@ -998,7 +991,7 @@ const HomePage = () => {
             </div>
             <p
               className="text-xs font-mono tracking-widest uppercase"
-              style={{ color: theme.muted, transition: 'color 400ms linear' }}
+              style={{ color: theme.muted, transition: `color 700ms ${EASE}` }}
             >
               &copy; {new Date().getFullYear()} Kalora. Aligning nature and
               nutrition.
@@ -1006,7 +999,7 @@ const HomePage = () => {
           </div>
           <div
             className="flex flex-wrap justify-center md:justify-end gap-x-10 gap-y-4 text-xs font-mono tracking-widest uppercase"
-            style={{ color: theme.text, transition: 'color 400ms linear' }}
+            style={{ color: theme.text, transition: `color 700ms ${EASE}` }}
           >
             <a
               href="#"
@@ -1026,12 +1019,18 @@ const HomePage = () => {
             >
               Support
             </a>
-            <a
-              href="#"
+            <Link
+              to="/terms"
+              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
+            >
+              Terms
+            </Link>
+            <Link
+              to="/privacy"
               className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
             >
               Privacy
-            </a>
+            </Link>
           </div>
         </div>
       </footer>

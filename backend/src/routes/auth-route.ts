@@ -2,7 +2,7 @@ import {Hono} from "hono";
 import {setCookie, deleteCookie, getCookie} from "hono/cookie";
 import bcrypt from "bcryptjs";
 import {db} from "../db/index.js";
-import {users, sessions} from "../db/schema.js";
+import {users, sessions, foodLogs} from "../db/schema.js";
 import {eq} from "drizzle-orm";
 import {createSession, hashPassword} from "../utils/auth-helpers.js";
 import {registerSchema, loginSchema} from "../utils/auth-validation.js";
@@ -240,6 +240,58 @@ authRoute.patch("/onboarding", authMiddleware, async (c) => {
     .where(eq(users.id, userId));
 
   return c.json({id: user.id, email: user.email, userName: user.userName});
+});
+
+authRoute.get("/export", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+
+  const user = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      userName: users.userName,
+      gender: users.gender,
+      age: users.age,
+      height: users.height,
+      weight: users.weight,
+      goalWeight: users.goalWeight,
+      activityLevel: users.activityLevel,
+      goal: users.goal,
+      calorieGoal: users.calorieGoal,
+      createdAt: users.createdAt,
+    })
+    .from(users)
+    .where(eq(users.id, userId))
+    .get();
+
+  if (!user) {
+    throw new AppError(404, "User not found", "USER_NOT_FOUND");
+  }
+
+  const logs = await db
+    .select()
+    .from(foodLogs)
+    .where(eq(foodLogs.userId, userId))
+    .all();
+
+  return c.json({
+    exportedAt: new Date().toISOString(),
+    user,
+    foodLogs: logs,
+  });
+});
+
+authRoute.delete("/me", authMiddleware, async (c) => {
+  const userId = c.get("userId");
+
+  await db.batch([
+    db.delete(foodLogs).where(eq(foodLogs.userId, userId)),
+    db.delete(sessions).where(eq(sessions.userId, userId)),
+    db.delete(users).where(eq(users.id, userId)),
+  ]);
+
+  deleteCookie(c, "session", {path: "/", sameSite: "None", secure: true});
+  return c.json({message: "Account deleted"});
 });
 
 export default authRoute;

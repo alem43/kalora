@@ -41,7 +41,6 @@ function Section({
 function RouteComponent() {
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased relative overflow-hidden pb-32">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <div className="absolute -top-40 -right-40 w-150 h-150 bg-[#82B85A]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
@@ -52,7 +51,7 @@ function RouteComponent() {
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#173A27]">
               Privacy Policy
             </h1>
-            <p className="text-xs font-mono uppercase tracking-widest text-gray-400 mt-3">
+            <p className="text-xs font-mono uppercase tracking-widest text-gray-500 mt-3">
               Last updated: {LAST_UPDATED}
             </p>
           </header>
@@ -67,7 +66,7 @@ function RouteComponent() {
                 at{' '}
                 <a
                   href="mailto:begunicalem6@gmail.com"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   begunicalem6@gmail.com
                 </a>
@@ -208,11 +207,11 @@ function RouteComponent() {
               <p>
                 We retain your account and food-log data for as long as your
                 account remains active. We do not currently have an
-                automated retention or deletion schedule. If you request
-                account deletion (see Section 10), we will delete your
-                personal data within a reasonable time, except where we are
-                required to retain limited information to comply with legal
-                obligations.
+                automated retention or deletion schedule. You can delete
+                your account at any time from your dashboard; this
+                immediately and permanently removes your profile, food logs,
+                and sessions from our database. Backups, if any, are
+                overwritten in the normal course of operation.
               </p>
             </Section>
 
@@ -231,17 +230,17 @@ function RouteComponent() {
                 Depending on your location, you may have the right to
                 access, correct, export, or delete your personal data, and
                 to object to or restrict certain processing. You can delete
-                individual food log entries directly within the app. To
-                request access to, correction of, or full deletion of your
-                account and associated data, email us at{' '}
+                individual food log entries, download a copy of your data,
+                and permanently delete your account directly from your
+                dashboard. For any other request, or if you cannot sign in,
+                email us at{' '}
                 <a
                   href="mailto:begunicalem6@gmail.com"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   begunicalem6@gmail.com
                 </a>
-                . We will handle your request manually and respond within a
-                reasonable time.
+                . We respond to requests within 30 days.
               </p>
             </Section>
 
@@ -277,14 +276,14 @@ function RouteComponent() {
                 your personal data, contact{' '}
                 <a
                   href="mailto:begunicalem6@gmail.com"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   begunicalem6@gmail.com
                 </a>
                 . See also our{' '}
                 <Link
                   to="/terms"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   Terms &amp; Conditions
                 </Link>

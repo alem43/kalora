@@ -169,7 +169,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
           <p className="font-extrabold text-[#173A27] text-sm mt-1">
             Execute Sync Audit
           </p>
-          <p className="text-[11px] text-gray-400 font-medium">
+          <p className="text-[11px] text-gray-500 font-medium">
             Verify compatibility indexes live
           </p>
         </div>
@@ -194,12 +194,12 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
             />
             <CommandList className="border-t border-[#F4F9F1]">
               {loading && (
-                <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                <CommandEmpty className="text-sm py-6 text-gray-500 font-medium">
                   Querying USDA Registry...
                 </CommandEmpty>
               )}
               {!loading && search && results.length === 0 && (
-                <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                <CommandEmpty className="text-sm py-6 text-gray-500 font-medium">
                   No records found.
                 </CommandEmpty>
               )}
@@ -214,7 +214,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                       <span className="font-bold text-sm text-[#173A27]">
                         {food.description}
                       </span>
-                      <span className="text-xs text-[#82B85A] font-semibold">
+                      <span className="text-xs text-[#3F6B3A] font-semibold">
                         {getNutrient(food, NUTRIENT_IDS.CALORIES)} kcal / 100g
                       </span>
                     </CommandItem>
@@ -235,7 +235,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 size="sm"
                 variant="ghost"
                 onClick={() => setSelected(null)}
-                className="text-gray-400 hover:text-[#805033] h-10 w-10 rounded-full shrink-0"
+                className="text-gray-500 hover:text-[#805033] h-10 w-10 rounded-full shrink-0"
               >
                 ✕
               </Button>
@@ -297,7 +297,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                     <p className="text-sm font-extrabold text-[#173A27]">
                       {value}
                     </p>
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                       {label}
                     </p>
                   </div>
@@ -306,7 +306,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
             )}
             {hasVerdict && (
               <div className="rounded-2xl border border-[#E2EEDB] bg-white p-4 space-y-2">
-                <p className="text-xs font-extrabold uppercase tracking-wider text-gray-400 mb-1">
+                <p className="text-xs font-extrabold uppercase tracking-wider text-gray-500 mb-1">
                   Live Audit Verdict
                 </p>
                 {verdict!.concerns.map((item) => (
@@ -320,7 +320,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
                 {verdict!.positives.map((item) => (
                   <p
                     key={item.text}
-                    className="text-xs font-bold text-[#82B85A] flex items-center gap-1.5"
+                    className="text-xs font-bold text-[#3F6B3A] flex items-center gap-1.5"
                   >
                     <span className="shrink-0 text-sm">✅</span> {item.text}
                   </p>

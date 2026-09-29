@@ -108,7 +108,7 @@ function PatternCard({ pattern }: { pattern: Pattern }) {
           className={`shrink-0 w-14 h-14 rounded-2xl flex items-center justify-center transition-colors duration-300 ${
             isDetected
               ? 'bg-[#805033]/10 text-[#805033]'
-              : 'bg-[#F4F9F1] text-[#82B85A] group-hover:bg-[#82B85A] group-hover:text-white'
+              : 'bg-[#F4F9F1] text-[#3F6B3A] group-hover:bg-[#82B85A] group-hover:text-white'
           }`}
         >
           {icon}
@@ -137,7 +137,7 @@ function PatternCard({ pattern }: { pattern: Pattern }) {
                 </svg>
               </span>
             ) : (
-              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F4F9F1] text-[#82B85A]">
+              <span className="flex items-center justify-center w-8 h-8 rounded-full bg-[#F4F9F1] text-[#3F6B3A]">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -204,7 +204,6 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased pb-24 relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-100 bg-[#82B85A]/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
       <div className="relative z-10">
         <BrowserRouter>
@@ -212,7 +211,7 @@ function RouteComponent() {
         </BrowserRouter>
         <main className="max-w-3xl mx-auto px-6 sm:px-8 pt-32">
           <div className="mb-12 text-center sm:text-left">
-            <p className="text-sm font-bold tracking-widest uppercase text-[#82B85A] mb-2">
+            <p className="text-sm font-bold tracking-widest uppercase text-[#3F6B3A] mb-2">
               Metabolic Compass
             </p>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">
@@ -259,7 +258,7 @@ function RouteComponent() {
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="w-20 h-20 bg-[#F4F9F1] rounded-full flex items-center justify-center mb-6 border-8 border-white shadow-sm">
                     <svg
-                      className="w-10 h-10 text-[#82B85A]"
+                      className="w-10 h-10 text-[#3F6B3A]"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -294,7 +293,7 @@ function RouteComponent() {
                       ? 'Perfect symmetry. No disruptive patterns found.'
                       : `${detectedCount} area${detectedCount !== 1 ? 's' : ''} requiring your attention.`}
                   </p>
-                  <div className="text-sm font-bold text-[#82B85A] bg-[#F4F9F1] px-4 py-1.5 rounded-full">
+                  <div className="text-sm font-bold text-[#3F6B3A] bg-[#F4F9F1] px-4 py-1.5 rounded-full">
                     {data!.dataRange.totalLogs} meals logged
                   </div>
                 </div>

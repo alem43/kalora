@@ -23,6 +23,9 @@ const step1Schema = z
       .min(8, 'Password must be at least 8 characters')
       .max(50),
     confirmPassword: z.string(),
+    consent: z.boolean().refine((v) => v === true, {
+      message: 'You must accept the Terms and Privacy Policy to continue',
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -257,6 +260,39 @@ function RouteComponent() {
                     </p>
                   )}
                 </div>
+                <div>
+                  <label className="flex items-start gap-3 text-sm text-gray-700">
+                    <input
+                      {...step1Form.register('consent')}
+                      type="checkbox"
+                      className="mt-1 h-4 w-4 shrink-0 accent-[#3F6B3A]"
+                    />
+                    <span>
+                      I am at least 13 years old and agree to the{' '}
+                      <Link
+                        to="/terms"
+                        target="_blank"
+                        className="text-[#3F6B3A] font-semibold underline"
+                      >
+                        Terms of Service
+                      </Link>{' '}
+                      and{' '}
+                      <Link
+                        to="/privacy"
+                        target="_blank"
+                        className="text-[#3F6B3A] font-semibold underline"
+                      >
+                        Privacy Policy
+                      </Link>
+                      .
+                    </span>
+                  </label>
+                  {step1Form.formState.errors.consent && (
+                    <p role="alert" className="mt-1.5 text-xs text-red-600">
+                      {step1Form.formState.errors.consent.message}
+                    </p>
+                  )}
+                </div>
                 <button
                   type="submit"
                   className="w-full bg-[#82B85A] hover:bg-[#73a54d] text-white font-semibold py-3 rounded-lg transition"
@@ -273,6 +309,18 @@ function RouteComponent() {
                   >
                     Log in
                   </Link>
+                </p>
+                <p className="text-xs text-gray-500">
+                  By continuing with Google, you confirm you are at least 13
+                  and agree to our{' '}
+                  <Link to="/terms" className="underline">
+                    Terms
+                  </Link>{' '}
+                  and{' '}
+                  <Link to="/privacy" className="underline">
+                    Privacy Policy
+                  </Link>
+                  .
                 </p>
                 <div className="flex justify-center">
                   <GoogleLogin
@@ -406,7 +454,7 @@ function RouteComponent() {
                     className="block text-sm font-medium text-gray-700 mb-1.5"
                   >
                     Goal Weight (kg){' '}
-                    <span className="text-gray-400">- Optional</span>
+                    <span className="text-gray-500">- Optional</span>
                   </label>
                   <input
                     {...step2Form.register('goalWeight', {

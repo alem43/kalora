@@ -41,7 +41,6 @@ function Section({
 function RouteComponent() {
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased relative overflow-hidden pb-32">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <div className="absolute -top-40 -right-40 w-150 h-150 bg-[#82B85A]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
 
       <div className="relative z-10 flex flex-col min-h-screen">
@@ -52,7 +51,7 @@ function RouteComponent() {
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-[#173A27]">
               Terms &amp; Conditions
             </h1>
-            <p className="text-xs font-mono uppercase tracking-widest text-gray-400 mt-3">
+            <p className="text-xs font-mono uppercase tracking-widest text-gray-500 mt-3">
               Last updated: {LAST_UPDATED}
             </p>
           </header>
@@ -165,7 +164,7 @@ function RouteComponent() {
                 described in our{' '}
                 <Link
                   to="/privacy"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   Privacy Policy
                 </Link>
@@ -202,7 +201,7 @@ function RouteComponent() {
                 data, contact us at{' '}
                 <a
                   href="mailto:begunicalem6@gmail.com"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   begunicalem6@gmail.com
                 </a>
@@ -241,7 +240,7 @@ function RouteComponent() {
                 Questions about these Terms can be sent to{' '}
                 <a
                   href="mailto:begunicalem6@gmail.com"
-                  className="text-[#82B85A] font-semibold underline underline-offset-2"
+                  className="text-[#3F6B3A] font-semibold underline underline-offset-2"
                 >
                   begunicalem6@gmail.com
                 </a>

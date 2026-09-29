@@ -86,13 +86,13 @@ const Goal = ({ refreshKey }: GoalProps) => {
         <div className="space-y-2 flex-1">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#82B85A] animate-pulse"></span>
-            <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
               Energy Mapping Baseline
             </p>
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#173A27]">
             {totalCalories.toLocaleString()}{' '}
-            <span className="text-base font-medium text-gray-400">
+            <span className="text-base font-medium text-gray-500">
               / {goalCalories.toLocaleString()} kcal consumed
             </span>
           </h2>
@@ -102,7 +102,7 @@ const Goal = ({ refreshKey }: GoalProps) => {
             <span className="text-[#173A27]">
               {percentage}% of baseline reached
             </span>
-            <span className={diff >= 0 ? 'text-[#82B85A]' : 'text-[#805033]'}>
+            <span className={diff >= 0 ? 'text-[#3F6B3A]' : 'text-[#805033]'}>
               {remainingLabel}
             </span>
           </div>

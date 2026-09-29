@@ -99,6 +99,8 @@ export const api = {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    exportData: () => request<unknown>('/auth/export'),
+    deleteAccount: () => request('/auth/me', { method: 'DELETE' }),
     completeOnboarding: (data: unknown) =>
       request('/auth/onboarding', {
         method: 'PATCH',

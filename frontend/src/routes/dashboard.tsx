@@ -1,4 +1,5 @@
 import FoodLog from '#/components/FoodLog'
+import AccountData from '#/components/AccountData'
 import Goal from '#/components/Goal'
 import Navbar from '#/components/Navbar'
 import ShouldIEatThis from '#/components/ShouldIEatThis'
@@ -26,7 +27,6 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] antialiased relative overflow-hidden pb-32">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <div className="absolute -top-40 -right-40 w-150 h-150 bg-[#82B85A]/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
       <div className="absolute top-[40%] -left-40 w-125 h-125 bg-[#805033]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="absolute -bottom-40 right-[20%] w-100 h-100 bg-[#C6D896]/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
@@ -40,7 +40,7 @@ function RouteComponent() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#82B85A] opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#82B85A]"></span>
                 </span>
-                <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#82B85A]">
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#3F6B3A]">
                   Live Rhythm Active
                 </p>
               </div>
@@ -66,17 +66,17 @@ function RouteComponent() {
               </h1>
             </div>
             <div className="flex flex-col items-end text-right">
-              <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-400 mb-1">
+              <div className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500 mb-1">
                 Issue
               </div>
               <div className="flex items-baseline gap-2 font-mono">
                 <span className="text-4xl font-light tracking-tighter">
                   {day}
                 </span>
-                <span className="text-xl font-bold text-[#82B85A]">
+                <span className="text-xl font-bold text-[#3F6B3A]">
                   {month}
                 </span>
-                <span className="text-xl text-gray-400">{year}</span>
+                <span className="text-xl text-gray-500">{year}</span>
               </div>
             </div>
           </header>
@@ -123,11 +123,11 @@ function RouteComponent() {
                     <h3 className="text-2xl font-extrabold text-[#173A27] tracking-tight">
                       Metabolic Ledger
                     </h3>
-                    <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider font-semibold">
+                    <p className="text-xs text-gray-500 mt-1 uppercase tracking-wider font-semibold">
                       Chronological Intake Record
                     </p>
                   </div>
-                  <div className="w-10 h-10 rounded-full bg-[#F4F9F1] flex items-center justify-center text-[#82B85A]">
+                  <div className="w-10 h-10 rounded-full bg-[#F4F9F1] flex items-center justify-center text-[#3F6B3A]">
                     <svg
                       className="w-5 h-5"
                       fill="none"
@@ -153,6 +153,7 @@ function RouteComponent() {
               </div>
             </div>
           </div>
+          <AccountData />
         </main>
       </div>
     </div>

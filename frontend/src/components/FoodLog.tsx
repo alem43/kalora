@@ -218,7 +218,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     <h2 className="text-xl font-extrabold capitalize text-[#173A27] tracking-tight">
                       {mealType}
                     </h2>
-                    <p className="text-xs font-bold text-[#82B85A] uppercase tracking-wider mt-0.5">
+                    <p className="text-xs font-bold text-[#3F6B3A] uppercase tracking-wider mt-0.5">
                       Chronological Window
                     </p>
                   </div>
@@ -247,7 +247,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                     {verdict.positives.map((item) => (
                       <p
                         key={item.text}
-                        className="text-xs font-bold text-[#82B85A] flex items-center gap-1.5"
+                        className="text-xs font-bold text-[#3F6B3A] flex items-center gap-1.5"
                       >
                         <span className="shrink-0 text-sm">✅</span> {item.text}
                       </p>
@@ -272,15 +272,15 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                         <p className="text-sm font-bold text-[#173A27] line-clamp-2 leading-snug">
                           {food.foodName}
                         </p>
-                        <p className="text-xs font-extrabold text-[#82B85A] mt-1">
+                        <p className="text-xs font-extrabold text-[#3F6B3A] mt-1">
                           {food.calories} kcal
                         </p>
                       </div>
                       <div className="flex items-end justify-between border-t border-[#F4F9F1] pt-2 mt-3">
-                        <p className="text-xs text-gray-400 font-medium">
+                        <p className="text-xs text-gray-500 font-medium">
                           {food.quantity}g
                         </p>
-                        <p className="text-xs text-gray-400 font-bold">
+                        <p className="text-xs text-gray-500 font-bold">
                           {new Date(food.loggedAt).toLocaleTimeString([], {
                             hour: 'numeric',
                             minute: '2-digit',
@@ -327,12 +327,12 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                 />
                 <CommandList className="border-t border-[#F4F9F1]">
                   {loading && (
-                    <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                    <CommandEmpty className="text-sm py-6 text-gray-500 font-medium">
                       Querying USDA Registry...
                     </CommandEmpty>
                   )}
                   {!loading && search && results.length === 0 && (
-                    <CommandEmpty className="text-sm py-6 text-gray-400 font-medium">
+                    <CommandEmpty className="text-sm py-6 text-gray-500 font-medium">
                       No metabolic metrics resolved.
                     </CommandEmpty>
                   )}
@@ -347,7 +347,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                           <span className="font-bold text-sm text-[#173A27]">
                             {food.description}
                           </span>
-                          <span className="text-xs text-[#82B85A] font-semibold">
+                          <span className="text-xs text-[#3F6B3A] font-semibold">
                             {getNutrient(food, NUTRIENT_IDS.CALORIES)} kcal /
                             100g
                           </span>
@@ -398,7 +398,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                   </div>
                 </div>
                 <div className="p-4 bg-white border border-[#E2EEDB] rounded-2xl">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">
                     Calculated Indexing ({quantity}g)
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
@@ -406,7 +406,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                       <p className="text-lg font-extrabold text-[#173A27]">
                         {getNutrient(selected, NUTRIENT_IDS.CALORIES, quantity)}
                       </p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                         Calories
                       </p>
                     </div>
@@ -414,7 +414,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                       <p className="text-lg font-extrabold text-[#173A27]">
                         {getNutrient(selected, NUTRIENT_IDS.PROTEIN, quantity)}g
                       </p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                         Protein
                       </p>
                     </div>
@@ -422,7 +422,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                       <p className="text-lg font-extrabold text-[#173A27]">
                         {getNutrient(selected, NUTRIENT_IDS.CARBS, quantity)}g
                       </p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                         Carbs
                       </p>
                     </div>
@@ -430,7 +430,7 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
                       <p className="text-lg font-extrabold text-[#173A27]">
                         {getNutrient(selected, NUTRIENT_IDS.FAT, quantity)}g
                       </p>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tight">
+                      <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tight">
                         Fat
                       </p>
                     </div>

@@ -2,7 +2,8 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/inter';
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&display=swap');
+@import '@fontsource-variable/fraunces/opsz.css';
+@import '@fontsource-variable/fraunces/opsz-italic.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -161,5 +162,5 @@ body {
 }
 
 .font-fraunces {
-  font-family: 'Fraunces', serif;
+  font-family: 'Fraunces Variable', serif;
 }

@@ -1002,19 +1002,7 @@ const HomePage = () => {
             style={{ color: theme.text, transition: `color 700ms ${EASE}` }}
           >
             <a
-              href="#"
-              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
-            >
-              The Philosophy
-            </a>
-            <a
-              href="#"
-              className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
-            >
-              Science
-            </a>
-            <a
-              href="#"
+              href="mailto:begunicalem6@gmail.com"
               className="hover:text-[#7CA655] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7CA655] focus-visible:ring-offset-4"
             >
               Support

@@ -64,7 +64,6 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-[#FAFCF8] text-[#173A27] font-sans selection:bg-[#82B85A]/30 selection:text-[#173A27] flex items-center justify-center p-4 relative overflow-hidden antialiased">
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
       <div className="absolute top-0 right-0 w-125 h-125 bg-[#82B85A]/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 z-0 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-100 h-100 bg-[#805033]/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 z-0 pointer-events-none"></div>
       <div className="w-full max-w-110 relative z-10">
@@ -123,7 +122,7 @@ function RouteComponent() {
                     type="email"
                     id="email"
                     autoFocus
-                    className="w-full px-5 py-4 bg-[#F4F9F1]/50 border border-[#E2EEDB] rounded-2xl focus:ring-4 focus:ring-[#82B85A]/10 focus:border-[#82B85A] transition-all outline-none text-[#173A27] font-medium placeholder:text-gray-400"
+                    className="w-full px-5 py-4 bg-[#F4F9F1]/50 border border-[#E2EEDB] rounded-2xl focus:ring-4 focus:ring-[#82B85A]/10 focus:border-[#82B85A] transition-all outline-none text-[#173A27] font-medium placeholder:text-gray-500"
                     placeholder="you@example.com"
                   />
                   {errors.email && (
@@ -155,7 +154,7 @@ function RouteComponent() {
                     </label>
                     <a
                       href="#"
-                      className="text-xs font-bold text-[#82B85A] hover:text-[#173A27] transition-colors"
+                      className="text-xs font-bold text-[#3F6B3A] hover:text-[#173A27] transition-colors"
                     >
                       Forgot?
                     </a>
@@ -164,7 +163,7 @@ function RouteComponent() {
                     {...register('password')}
                     type="password"
                     id="password"
-                    className="w-full px-5 py-4 bg-[#F4F9F1]/50 border border-[#E2EEDB] rounded-2xl focus:ring-4 focus:ring-[#82B85A]/10 focus:border-[#82B85A] transition-all outline-none text-[#173A27] font-medium tracking-widest placeholder:tracking-normal placeholder:text-gray-400"
+                    className="w-full px-5 py-4 bg-[#F4F9F1]/50 border border-[#E2EEDB] rounded-2xl focus:ring-4 focus:ring-[#82B85A]/10 focus:border-[#82B85A] transition-all outline-none text-[#173A27] font-medium tracking-widest placeholder:tracking-normal placeholder:text-gray-500"
                     placeholder="••••••••"
                   />
                   {errors.password && (
@@ -225,7 +224,7 @@ function RouteComponent() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-[#E2EEDB]"></div>
               </div>
-              <div className="relative bg-white px-4 text-xs font-bold uppercase tracking-widest text-gray-400">
+              <div className="relative bg-white px-4 text-xs font-bold uppercase tracking-widest text-gray-500">
                 Or connect with
               </div>
             </div>
@@ -253,13 +252,25 @@ function RouteComponent() {
                 />
               </div>
             </div>
+            <p className="mt-4 text-center text-xs text-gray-500">
+              By continuing with Google, you confirm you are at least 13 and
+              agree to our{' '}
+              <Link to="/terms" className="underline">
+                Terms
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy" className="underline">
+                Privacy Policy
+              </Link>
+              .
+            </p>
           </div>
         </div>
         <p className="mt-8 text-center text-sm font-medium text-gray-500">
           New to the rhythm?
           <Link
             to="/register"
-            className="text-[#82B85A] font-bold hover:text-[#173A27] transition-colors underline decoration-[#82B85A]/30 underline-offset-4"
+            className="text-[#3F6B3A] font-bold hover:text-[#173A27] transition-colors underline decoration-[#82B85A]/30 underline-offset-4"
           >
             Start your map
           </Link>

@@ -59,13 +59,23 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
+        const params = new URLSearchParams({
+          query: search,
+          pageSize: '10',
+          api_key: API_KEY,
+        })
+        ;['Foundation', 'SR Legacy', 'Survey (FNDDS)'].forEach((t) =>
+          params.append('dataType', t),
+        )
+
         const res = await fetch(
-          `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(
-            search,
-          )}&dataType=Foundation,SR Legacy&pageSize=10&api_key=${API_KEY}`,
+          `https://api.nal.usda.gov/fdc/v1/foods/search?${params.toString()}`,
         )
         const data = await res.json()
-        setResults(data.foods || [])
+        const generic = (data.foods || []).filter(
+          (f: any) => f.dataType !== 'Branded',
+        )
+        setResults(generic)
       } catch (err) {
         console.error('Search failed:', err)
         setResults([])

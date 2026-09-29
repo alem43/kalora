@@ -60,7 +60,7 @@ function RouteComponent() {
             <Section id="acceptance" title="1. Acceptance of Terms">
               <p>
                 These Terms &amp; Conditions ("Terms") govern your access to
-                and use of Kalora (the "Service"), operated by Kalora
+                and use of Kalora (the "Service"), operated by Alem Begunić, Tešanj, Bosnia and Herzegovina
                 ("we," "us," or "our"). By creating an account or using the
                 Service, you agree to be bound by these Terms. If you do not
                 agree, do not use the Service.

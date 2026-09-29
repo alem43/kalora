@@ -119,5 +119,9 @@ export const api = {
         method: 'DELETE',
       }),
     insights: () => request<InsightsResponse>('/food/insights'),
+    search: (q: string, types = 'Foundation,SR Legacy') =>
+      request<{ foods: any[] }>(
+        `/food/search?${new URLSearchParams({ q, types }).toString()}`,
+      ),
   },
 }

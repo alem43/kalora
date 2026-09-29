@@ -59,7 +59,7 @@ function RouteComponent() {
           <div className="space-y-10 bg-white border border-[#E2EEDB] rounded-3xl p-6 sm:p-10 shadow-sm">
             <Section id="who-we-are" title="1. Who We Are">
               <p>
-                This Privacy Policy explains how Kalora ("we," "us," or
+                Kalora is operated by Alem Begunić, Tešanj, Bosnia and Herzegovina. This Privacy Policy explains how Kalora ("we," "us," or
                 "our") collects, uses, and protects personal data when you
                 use the Kalora nutrition-tracking application (the
                 "Service"). For any privacy question or request, contact us
@@ -163,11 +163,12 @@ function RouteComponent() {
             <Section id="third-party-food-search" title="5. Food Search (USDA FoodData Central)">
               <p>
                 When you search for a food item to log, your search text is
-                sent directly from your browser to the U.S. Department of
-                Agriculture's public FoodData Central API to retrieve
-                nutritional data. This request does not include your name,
-                email, or account information — only the search text you
-                type.
+                sent to our server, which forwards it to the U.S. Department
+                of Agriculture's public FoodData Central API to retrieve
+                nutritional data. The forwarded request contains only the
+                search text; it does not include your name, email, or account
+                information, and the USDA sees our server's address, not
+                yours.
               </p>
             </Section>
 

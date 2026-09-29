@@ -23,8 +23,6 @@ import {
 import { api, ApiError } from '#/lib/api'
 import { generateMealVerdict } from '../lib/verdicts'
 
-const API_KEY = import.meta.env.VITE_USDA_API_KEY || ''
-
 const NUTRIENT_IDS = {
   CALORIES: 1008,
   PROTEIN: 1003,
@@ -59,19 +57,10 @@ const FoodLog = ({ onFoodAdded, refreshKey }: FoodLogProps) => {
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
-        const params = new URLSearchParams({
-          query: search,
-          pageSize: '10',
-          api_key: API_KEY,
-        })
-        ;['Foundation', 'SR Legacy', 'Survey (FNDDS)'].forEach((t) =>
-          params.append('dataType', t),
+        const data = await api.food.search(
+          search,
+          'Foundation,SR Legacy,Survey (FNDDS)',
         )
-
-        const res = await fetch(
-          `https://api.nal.usda.gov/fdc/v1/foods/search?${params.toString()}`,
-        )
-        const data = await res.json()
         const generic = (data.foods || []).filter(
           (f: any) => f.dataType !== 'Branded',
         )

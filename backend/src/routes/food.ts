@@ -62,6 +62,49 @@ food.post("/", async (c) => {
   return c.json(result[0], 201);
 });
 
+const ALLOWED_DATA_TYPES = new Set(["Foundation", "SR Legacy", "Survey (FNDDS)"]);
+
+food.get("/search", async (c) => {
+  const apiKey = process.env.USDA_API_KEY;
+  if (!apiKey) {
+    throw new AppError(500, "Food search unavailable", "SEARCH_NOT_CONFIGURED");
+  }
+
+  const q = (c.req.query("q") || "").trim();
+  if (q.length < 2 || q.length > 100) {
+    throw new AppError(400, "Invalid search query", "INVALID_QUERY");
+  }
+
+  const requested = (c.req.query("types") || "Foundation,SR Legacy")
+    .split(",")
+    .map((t) => t.trim())
+    .filter((t) => ALLOWED_DATA_TYPES.has(t));
+  const types = requested.length ? requested : ["Foundation", "SR Legacy"];
+
+  const params = new URLSearchParams({query: q, pageSize: "10"});
+  for (const t of types) params.append("dataType", t);
+
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://api.nal.usda.gov/fdc/v1/foods/search?${params.toString()}`,
+      {
+        headers: {"X-Api-Key": apiKey},
+        signal: AbortSignal.timeout(8000),
+      },
+    );
+  } catch {
+    throw new AppError(502, "Food search failed", "SEARCH_UPSTREAM_ERROR");
+  }
+
+  if (!res.ok) {
+    throw new AppError(502, "Food search failed", "SEARCH_UPSTREAM_ERROR");
+  }
+
+  const data = (await res.json()) as {foods?: unknown[]};
+  return c.json({foods: data.foods ?? []});
+});
+
 food.get("/insights", async (c) => {
   const userId = c.get("userId");
 

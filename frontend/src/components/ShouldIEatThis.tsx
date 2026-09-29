@@ -21,8 +21,6 @@ import { generateMealVerdict } from '../lib/verdicts'
 import type { MealCategory } from '../lib/verdicts'
 import { api } from '#/lib/api'
 
-const API_KEY = import.meta.env.VITE_USDA_API_KEY || ''
-
 const NUTRIENT_IDS = {
   CALORIES: 1008,
   PROTEIN: 1003,
@@ -81,12 +79,7 @@ export function ShouldIEatThis({ onFoodLogged }: Props) {
     const timer = setTimeout(async () => {
       setLoading(true)
       try {
-        const res = await fetch(
-          `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(
-            search,
-          )}&dataType=Foundation,SR Legacy&pageSize=10&api_key=${API_KEY}`,
-        )
-        const data = await res.json()
+        const data = await api.food.search(search)
         setResults(data.foods || [])
       } catch {
         setResults([])
